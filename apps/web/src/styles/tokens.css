@@ -1,0 +1,3 @@
+/* Tuck design tokens: a layered token system (primitives → semantics → components). */
+@import './system.tokens.css';
+@import './variant.tokens.css';

@@ -1,0 +1,45 @@
+/* Import once after fonts.css and tokens.css. This file is global. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  block-size: 100%;
+  min-block-size: 0;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+body {
+  background: var(--color-canvas);
+  color: var(--color-text);
+  font: var(--weight-regular) var(--text-body) / var(--line-body) var(--font-text);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  min-inline-size: 0;
+}
+button {
+  touch-action: manipulation;
+}
+button:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+svg {
+  vertical-align: middle;
+}
+[hidden] {
+  display: none !important;
+}

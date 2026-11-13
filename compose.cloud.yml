@@ -1,0 +1,115 @@
+# Production stack for `make cloud` on any VM with Docker: Traefik terminates TLS with a Let's
+# Encrypt certificate for DOMAIN, load-balances /api across the stateless API replicas and sends
+# everything else to nginx, which serves the app. The replicas share Postgres (data) and Redis
+# (rate-limit counters). Only Traefik publishes ports; the rest is reachable inside the stack only.
+name: tuck-cloud
+
+services:
+  traefik:
+    image: traefik:v3.6
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.constraints=Label(`com.docker.compose.project`, `tuck-cloud`)
+      - --entryPoints.web.address=:80
+      - --entryPoints.web.http.redirections.entryPoint.to=websecure
+      - --entryPoints.web.http.redirections.entryPoint.scheme=https
+      - --entryPoints.websecure.address=:443
+      - --certificatesResolvers.letsencrypt.acme.email=${ACME_EMAIL:?set ACME_EMAIL in .env}
+      - --certificatesResolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesResolvers.letsencrypt.acme.httpChallenge.entryPoint=web
+      - --certificatesResolvers.letsencrypt.acme.caServer=${ACME_CA_SERVER:-https://acme-v02.api.letsencrypt.org/directory}
+      - --ping=true
+      # One line per request, naming the API replica that served it.
+      - --accesslog=true
+    healthcheck:
+      test: ['CMD', 'traefik', 'healthcheck', '--ping']
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    ports:
+      - '${HTTP_PORT:-80}:80'
+      - '${HTTPS_PORT:-443}:443'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+    restart: unless-stopped
+
+  postgres:
+    # Debian-based on purpose: Alpine images have no locales, so lower() would not fold É.
+    image: postgres:16
+    environment:
+      POSTGRES_USER: tuck
+      POSTGRES_DB: tuck
+      # Applied when the volume is first created; generated once into .env.secret.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?run make cloud, which generates .env.secret}
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'tuck', '-d', 'tuck']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    # Rate-limit counters only: short-lived by design, so nothing is persisted.
+    image: redis:7
+    command: ['redis-server', '--save', '', '--appendonly', 'no']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    image: ghcr.io/alexdeg92/tuck-api:${IMAGE_TAG:-latest}
+    init: true
+    deploy:
+      replicas: ${API_REPLICAS:-2}
+    environment:
+      JWT_SECRET: ${JWT_SECRET:?run make cloud, which generates .env.secret}
+      DATABASE_URL: postgres://tuck:${POSTGRES_PASSWORD}@postgres:5432/tuck
+      REDIS_URL: redis://redis:6379
+      SEED_DEMO: ${SEED_DEMO:-false}
+      COOKIE_SECURE: 'true'
+      # One proxy hop (Traefik), so the rate limit sees the real client address.
+      TRUST_PROXY: '1'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    labels:
+      # Traefik only routes to healthy replicas and spreads requests across them (round robin).
+      - traefik.enable=true
+      - traefik.http.routers.tuck-api.rule=Host(`${DOMAIN:?set DOMAIN in .env}`) && PathPrefix(`/api/`)
+      - traefik.http.routers.tuck-api.entryPoints=websecure
+      - traefik.http.routers.tuck-api.tls.certResolver=letsencrypt
+      - traefik.http.routers.tuck-api.middlewares=hsts,no-store,api-retry
+      - traefik.http.middlewares.no-store.headers.customResponseHeaders.Cache-Control=no-store
+      # A replica that is stopping can drop a connection before Traefik notices: retry it on another.
+      - traefik.http.middlewares.api-retry.retry.attempts=3
+      - traefik.http.middlewares.api-retry.retry.initialInterval=100ms
+      - traefik.http.services.tuck-api.loadBalancer.server.port=3000
+    restart: unless-stopped
+
+  web:
+    image: ghcr.io/alexdeg92/tuck-web:${IMAGE_TAG:-latest}
+    depends_on:
+      api:
+        condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.tuck.rule=Host(`${DOMAIN:?set DOMAIN in .env}`)
+      - traefik.http.routers.tuck.entryPoints=websecure
+      - traefik.http.routers.tuck.tls.certResolver=letsencrypt
+      - traefik.http.routers.tuck.middlewares=hsts
+      - traefik.http.middlewares.hsts.headers.stsSeconds=31536000
+      - traefik.http.services.tuck.loadBalancer.server.port=8080
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  letsencrypt:

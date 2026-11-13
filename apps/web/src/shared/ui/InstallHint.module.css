@@ -1,0 +1,9 @@
+.hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+  margin: var(--space-2) max(var(--space-4), var(--layout-safe-right)) var(--space-2)
+    max(var(--space-4), var(--layout-safe-left));
+}

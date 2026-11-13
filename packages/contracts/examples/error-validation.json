@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "message": "Request validation failed",
+    "details": [{ "path": "title", "message": "Too small: expected string to have >=1 characters" }]
+  }
+}

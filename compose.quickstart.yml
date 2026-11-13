@@ -1,0 +1,42 @@
+# Run Tuck from the published images, no clone and no other files:
+#   curl -fsSL https://raw.githubusercontent.com/alexdeg92/tuck/main/compose.quickstart.yml -o compose.yml && docker compose up
+# Then open http://localhost:8080 and sign in as demo@example.com / demo1234.
+name: tuck-quickstart
+
+services:
+  api:
+    image: ghcr.io/alexdeg92/tuck-api:${IMAGE_TAG:-latest}
+    init: true
+    environment:
+      # Set JWT_SECRET to choose the session secret; otherwise a random one is generated on the
+      # first start and kept in the data volume, so sessions survive a restart.
+      JWT_SECRET: ${JWT_SECRET:-}
+      SEED_DEMO: 'true'
+      # Plain http on localhost: a Secure cookie would never be sent back.
+      COOKIE_SECURE: 'false'
+      TRUST_PROXY: '1'
+    command:
+      - sh
+      - -c
+      - |
+        if [ -z "$$JWT_SECRET" ]; then
+          [ -s /data/.jwt-secret ] || node -e "process.stdout.write(require('crypto').randomBytes(32).toString('hex'))" > /data/.jwt-secret
+          JWT_SECRET=$$(cat /data/.jwt-secret)
+          export JWT_SECRET
+        fi
+        exec node dist/server.js
+    volumes:
+      - tuck-data:/data
+    restart: unless-stopped
+
+  web:
+    image: ghcr.io/alexdeg92/tuck-web:${IMAGE_TAG:-latest}
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:${LOCAL_PORT:-8080}:8080'
+    restart: unless-stopped
+
+volumes:
+  tuck-data:

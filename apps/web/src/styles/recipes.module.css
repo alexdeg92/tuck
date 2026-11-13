@@ -1,0 +1,1344 @@
+/* SHARED FOUNDATION — each root uses material plus its component class.
+   Add interactive only to enabled interactive surfaces (not to native fields).
+   All colours, lengths and durations come from tokens.css. */
+.material {
+  --t1: var(--color-surface);
+  --t2: var(--color-highlight);
+  --t3: var(--color-edge);
+  --t4: var(--elevation-contact);
+  color: var(--color-text);
+  background: var(--t1);
+  border: var(--border-width) solid var(--t3);
+  box-shadow:
+    inset 0 var(--border-width) 0 var(--t2),
+    inset 0 calc(-1 * var(--border-width)) 0 var(--color-inner-shade),
+    var(--t4);
+}
+.interactive {
+  position: relative;
+  isolation: isolate;
+  cursor: pointer;
+  touch-action: manipulation;
+  outline: var(--focus-width) solid transparent;
+  outline-offset: var(--focus-offset);
+  transition:
+    transform var(--motion-release-duration) var(--ease-release),
+    box-shadow var(--motion-release-duration) var(--ease-state),
+    background-color var(--motion-hover-duration) var(--ease-state),
+    border-color var(--motion-hover-duration) var(--ease-state),
+    color var(--motion-change-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state);
+}
+.interactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--color-state-layer);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-hover-duration) var(--ease-state);
+}
+@media (hover: hover) {
+  .interactive:hover:not(:disabled):not([aria-disabled='true']):not([aria-busy='true']) {
+    transform: translateY(var(--lift-hover));
+    box-shadow:
+      inset 0 var(--border-width) 0 var(--color-highlight-hover),
+      inset 0 calc(-1 * var(--border-width)) 0 var(--color-inner-shade),
+      var(--control-hover-t4);
+  }
+  .interactive:hover:not(:disabled):not([aria-disabled='true'])::before {
+    opacity: var(--state-hover);
+  }
+}
+.interactive:focus-visible {
+  outline-color: var(--color-focus);
+}
+.interactive:focus-visible::before {
+  opacity: var(--state-focus);
+}
+.interactive:active:not(:disabled):not([aria-disabled='true']):not([aria-busy='true']) {
+  transform: translateY(var(--press-y)) scale(var(--press-scale));
+  box-shadow:
+    var(--shade-pressed),
+    inset 0 0 0 transparent,
+    var(--elevation-contact);
+  transition-duration: var(--motion-press-duration);
+  transition-timing-function: var(--ease-press);
+}
+.interactive:active:not(:disabled):not([aria-disabled='true'])::before {
+  opacity: var(--state-pressed);
+}
+.interactive:disabled,
+.interactive[aria-disabled='true'] {
+  --t1: var(--control-disabled-t1);
+  --t3: var(--control-disabled-t3);
+  --t4: var(--control-disabled-t4);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+  transform: none;
+}
+.interactive:disabled::before,
+.interactive[aria-disabled='true']::before {
+  opacity: 0;
+}
+/* A state layer is the only overlay. Focus is a separate ring, never a shadow substitute. */
+.label {
+  min-inline-size: 0;
+}
+.spinner {
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
+  animation: spin var(--motion-busy-period) var(--ease-linear) infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+/* Every keyframe travels by a --move-* amplitude, which reduced motion sets to identity, so the
+   same keyframe becomes a plain crossfade there. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-enter-y));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes leave {
+  /* A swiped-away row leaves from where the finger let go (0 for any other delete). */
+  from {
+    transform: translateX(var(--ghost-from-x, 0px));
+  }
+  to {
+    opacity: 0;
+    transform: translateX(var(--move-exit-x));
+  }
+}
+@keyframes sink {
+  to {
+    opacity: 0;
+    transform: translateY(var(--move-complete-y));
+  }
+}
+@keyframes dialogEnter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-dialog-y)) scale(var(--move-dialog-scale));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dialogLeave {
+  to {
+    opacity: 0;
+    transform: translateY(var(--move-dialog-y));
+  }
+}
+@keyframes toastEnter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-toast-y));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes toastLeave {
+  to {
+    opacity: 0;
+    transform: translateY(var(--move-toast-exit-y));
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+/* @component Button */
+.button {
+  display: inline-grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: var(--control-height);
+  min-inline-size: var(--button-min-inline-size);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-control);
+  font: var(--weight-semibold) var(--text-sm) / var(--line-body) var(--font-text);
+  white-space: nowrap;
+}
+.primary {
+  --t1: var(--button-primary-t1);
+  --t2: var(--button-primary-t2);
+  --t3: var(--button-primary-t3);
+  --t4: var(--button-primary-t4);
+  color: var(--button-primary-text);
+  border-radius: var(--radius-pill);
+}
+.secondary {
+  --t1: var(--button-secondary-t1);
+  --t2: var(--button-secondary-t2);
+  --t3: var(--button-secondary-t3);
+  --t4: var(--button-secondary-t4);
+  color: var(--button-secondary-text);
+}
+.ghost {
+  --t1: var(--button-ghost-t1);
+  --t2: var(--button-ghost-t2);
+  --t3: var(--button-ghost-t3);
+  --t4: var(--button-ghost-t4);
+  color: var(--button-ghost-text);
+}
+.danger {
+  --t1: var(--button-danger-t1);
+  --t2: var(--button-danger-t2);
+  --t3: var(--button-danger-t3);
+  --t4: var(--button-danger-t4);
+  color: var(--button-danger-text);
+}
+@media (hover: hover) {
+  .primary:hover:not(:disabled):not([aria-busy='true']) {
+    --t1: var(--button-primary-hover-t1);
+  }
+  .danger:hover:not(:disabled):not([aria-busy='true']) {
+    --t1: var(--button-danger-hover-t1);
+  }
+}
+.primary:active:not(:disabled) {
+  --t1: var(--button-primary-pressed-t1);
+}
+/* Filled buttons show one composite per state (accent-700 rest, 600 hover, 800 pressed): the
+   fill carries it, so the ink state layer stays off instead of muddying the change. */
+.button.primary:hover:not(:disabled):not([aria-disabled='true'])::before,
+.button.primary:active:not(:disabled):not([aria-disabled='true'])::before,
+.button.danger:hover:not(:disabled):not([aria-disabled='true'])::before {
+  opacity: 0;
+}
+.button:is(.primary, .danger)[data-released='true']::before {
+  opacity: 0.04;
+}
+.button:is(.primary, .danger)[data-released='true'] {
+  transform: translateY(var(--lift-hover));
+  box-shadow:
+    inset 0 1px 0 var(--color-highlight-hover),
+    inset 0 calc(-1 * var(--border-width)) 0 var(--color-inner-shade),
+    var(--elevation-raised);
+}
+.button[aria-busy='true'] {
+  cursor: wait;
+}
+.busyContent,
+.resultContent {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+}
+.button[aria-busy='true'] > .label,
+.button[aria-busy='true'] > .buttonIcon,
+.button[data-result='success'] > .label,
+.button[data-result='success'] > .buttonIcon {
+  visibility: hidden;
+}
+.button[aria-busy='true'] .busyContent,
+.button[data-result='success'] .resultContent {
+  display: flex;
+}
+.button[data-result='success'] {
+  --t1: var(--button-result-t1);
+  --t3: var(--button-result-t3);
+  color: var(--button-result-text);
+}
+.button[data-result='error'] {
+  --t3: var(--color-danger);
+  color: var(--color-danger);
+}
+/* Keep busy and success controls aria-disabled, not disabled, to retain focus.
+   Guard the handler using the mutation's pending flag; do not simulate success. */
+.button[aria-busy='true'][aria-disabled='true'] {
+  --t1: var(--button-primary-t1);
+  --t3: var(--button-primary-t3);
+  color: var(--button-primary-text);
+}
+.button.secondary[aria-busy='true'],
+.button.ghost[aria-busy='true'] {
+  --t1: var(--color-surface);
+  --t3: var(--color-control-edge);
+  color: var(--color-text);
+}
+.button.danger[aria-busy='true'] {
+  --t1: var(--button-danger-t1);
+  --t3: var(--button-danger-t3);
+  color: var(--button-danger-text);
+}
+.button[data-result='success'][aria-disabled='true'] {
+  --t1: var(--button-result-t1);
+  --t3: var(--button-result-t3);
+  color: var(--button-result-text);
+}
+.buttonIcon {
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
+}
+
+/* @component IconButton */
+.iconButton {
+  --t1: var(--icon-button-t1);
+  --t2: var(--icon-button-t2);
+  --t3: var(--icon-button-t3);
+  --t4: var(--icon-button-t4);
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: var(--control-height);
+  min-block-size: var(--control-height);
+  padding: var(--space-2);
+  border-radius: var(--radius-small);
+}
+.iconButton > svg {
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
+}
+.iconButton[aria-busy='true'] {
+  cursor: wait;
+}
+.iconButton[data-result='success'] {
+  color: var(--color-success);
+}
+.iconButton[data-result='error'] {
+  color: var(--color-danger);
+}
+
+/* @component Input */
+.field {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  font-size: var(--text-sm);
+  color: var(--color-subtle);
+}
+.fieldControl {
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: var(--control-height);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-small);
+  font: var(--weight-regular) var(--text-control) / var(--line-body) var(--font-text);
+  outline: var(--focus-width) solid transparent;
+  outline-offset: var(--focus-offset);
+  transition:
+    transform var(--motion-release-duration) var(--ease-release),
+    box-shadow var(--motion-release-duration) var(--ease-state),
+    background-color var(--motion-hover-duration) var(--ease-state),
+    border-color var(--motion-hover-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state);
+}
+.input {
+  --t1: var(--input-t1);
+  --t2: var(--input-t2);
+  --t3: var(--input-t3);
+  --t4: var(--input-t4);
+}
+.fieldControl::placeholder,
+.searchInput::placeholder {
+  color: var(--color-muted);
+  opacity: 1;
+}
+@media (hover: hover) {
+  .fieldControl:hover:not(:disabled):not([readonly]),
+  .search:hover:not([data-disabled='true']) {
+    --t1: var(--color-field-hover);
+    --t3: var(--color-edge-hover);
+    transform: translateY(var(--lift-hover));
+    box-shadow:
+      inset 0 var(--border-width) 0 var(--color-highlight),
+      inset 0 calc(-1 * var(--border-width)) 0 var(--color-inner-shade),
+      var(--control-hover-t4);
+  }
+}
+.fieldControl:focus-visible,
+.search:focus-within {
+  --t1: var(--color-field-focus);
+  --t3: var(--control-focus-t3);
+  outline-color: var(--color-focus);
+  transform: none;
+}
+.fieldControl:active:not(:disabled),
+.search:active:not([data-disabled='true']) {
+  --t1: var(--color-field-pressed);
+  transform: translateY(var(--press-y));
+  box-shadow:
+    var(--shade-pressed),
+    inset 0 0 0 transparent,
+    var(--elevation-contact);
+  transition-duration: var(--motion-press-duration);
+}
+.fieldControl:disabled,
+.search[data-disabled='true'] {
+  --t1: var(--control-disabled-t1);
+  --t3: var(--control-disabled-t3);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow:
+    inset 0 var(--border-width) 0 var(--color-highlight),
+    inset 0 calc(-1 * var(--border-width)) 0 var(--color-inner-shade),
+    var(--control-disabled-t4);
+}
+.fieldControl[aria-invalid='true'],
+.search[data-result='error'] {
+  --t1: var(--field-error-t1);
+  --t3: var(--field-error-t3);
+}
+.fieldControl[data-result='success'] {
+  --t3: var(--field-success-t3);
+}
+.fieldControl[readonly],
+.fieldControl[aria-busy='true'] {
+  cursor: default;
+}
+.fieldHelp,
+.fieldError {
+  min-block-size: var(--space-4);
+  font: var(--weight-regular) var(--text-xs) / var(--line-body) var(--font-text);
+}
+.fieldHelp {
+  color: var(--color-muted);
+}
+.fieldError {
+  color: var(--color-danger);
+}
+
+/* @component Search */
+.search {
+  --t1: var(--search-t1);
+  --t2: var(--search-t2);
+  --t3: var(--search-t3);
+  --t4: var(--search-t4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  min-block-size: var(--control-height);
+  padding-inline-start: var(--space-3);
+  border-radius: var(--radius-control);
+  outline: var(--focus-width) solid transparent;
+  outline-offset: var(--focus-offset);
+  transition:
+    transform var(--motion-release-duration) var(--ease-release),
+    box-shadow var(--motion-release-duration) var(--ease-state),
+    background-color var(--motion-hover-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state);
+}
+.searchInput {
+  inline-size: 100%;
+  min-inline-size: 0;
+  border: 0;
+  /* The ring is drawn by the parent .search on :focus-within. */
+  outline: none;
+  background: none;
+  padding-block: var(--space-2);
+  font: var(--weight-regular) var(--text-control) / var(--line-body) var(--font-text);
+}
+
+.searchIcon {
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+.search[data-disabled='true'] .searchInput {
+  color: var(--color-disabled-text);
+}
+
+/* @component Textarea */
+.textarea {
+  --t1: var(--textarea-t1);
+  --t2: var(--textarea-t2);
+  --t3: var(--textarea-t3);
+  --t4: var(--textarea-t4);
+  min-block-size: var(--layout-notes-min);
+  resize: vertical;
+}
+.titleTextarea {
+  min-block-size: var(--layout-title-min);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--line-heading);
+  letter-spacing: var(--p-tracking-tight);
+  resize: vertical;
+  overflow-wrap: anywhere;
+}
+
+/* @component Checkbox */
+.checkControl {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--control-height);
+  block-size: var(--control-height);
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.checkInput {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  opacity: 0;
+  margin: 0;
+  z-index: 1;
+  cursor: pointer;
+}
+.checkbox {
+  --t1: var(--checkbox-t1);
+  --t2: var(--checkbox-t2);
+  --t3: var(--checkbox-t3);
+  --t4: var(--checkbox-t4);
+  display: grid;
+  place-items: center;
+  inline-size: var(--p-check);
+  block-size: var(--p-check);
+  border-radius: var(--radius-small);
+  outline: var(--focus-width) solid transparent;
+  outline-offset: var(--focus-offset);
+  transition:
+    transform var(--motion-release-duration) var(--ease-release),
+    background-color var(--motion-hover-duration) var(--ease-state),
+    border-color var(--motion-hover-duration) var(--ease-state),
+    color var(--motion-hover-duration) var(--ease-state),
+    box-shadow var(--motion-release-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state);
+}
+.checkGlyph {
+  inline-size: var(--space-4);
+  block-size: var(--space-4);
+  stroke-dasharray: var(--layout-check-dash);
+  stroke-dashoffset: var(--layout-check-dash);
+  transition:
+    stroke-dashoffset var(--motion-check-duration) var(--ease-state),
+    opacity var(--motion-hover-duration) var(--ease-state),
+    color var(--motion-hover-duration) var(--ease-state);
+}
+@media (hover: hover) {
+  .checkInput:hover:not(:disabled) + .checkbox {
+    box-shadow:
+      inset 0 var(--border-width) 0 var(--color-highlight),
+      inset 0 calc(-1 * var(--border-width)) 0 var(--color-inner-shade),
+      var(--control-hover-t4);
+  }
+}
+.checkInput:active:not(:disabled) + .checkbox {
+  transform: scale(var(--check-press-scale));
+  box-shadow:
+    var(--shade-pressed),
+    inset 0 0 0 transparent,
+    var(--elevation-contact);
+  transition-duration: var(--motion-press-duration);
+  transition-timing-function: var(--ease-press);
+}
+.checkInput:checked + .checkbox {
+  --t1: var(--checkbox-checked-t1);
+  --t2: var(--checkbox-checked-t2);
+  --t3: var(--checkbox-checked-t3);
+  color: var(--checkbox-checked-text);
+}
+.checkInput:checked + .checkbox .checkGlyph {
+  stroke-dashoffset: 0;
+}
+.checkInput:focus-visible + .checkbox {
+  outline-color: var(--color-focus);
+}
+.checkInput:disabled {
+  cursor: not-allowed;
+}
+.checkInput:disabled + .checkbox {
+  --t1: var(--control-disabled-t1);
+  --t3: var(--control-disabled-t3);
+  color: var(--color-disabled-text);
+  transform: none;
+}
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--color-subtle);
+}
+
+/* @component PriorityBadge */
+.priorityBadge {
+  --t1: var(--priority-badge-t1);
+  --t2: var(--priority-badge-t2);
+  --t3: var(--priority-badge-t3);
+  --t4: var(--priority-badge-t4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--layout-badge-pad-y) var(--layout-badge-pad-x);
+  border-radius: var(--radius-pill);
+  font: var(--weight-medium) var(--text-xs) / var(--line-label) var(--font-text);
+  white-space: nowrap;
+}
+.priorityBadge[data-priority='high'] {
+  --t1: var(--badge-high-t1);
+  --t3: var(--badge-high-t3);
+  color: var(--badge-high-text);
+}
+.priorityBadge[data-priority='medium'] {
+  --t1: var(--badge-medium-t1);
+  --t3: var(--badge-medium-t3);
+  color: var(--badge-medium-text);
+}
+.priorityBadge[data-priority='low'] {
+  --t1: var(--badge-low-t1);
+  --t3: var(--badge-low-t3);
+  color: var(--badge-low-text);
+}
+.priorityBadge > svg {
+  inline-size: var(--p-badge-icon);
+  block-size: var(--p-badge-icon);
+}
+/* Read-only <span>. The priority Select owns changes; don't invent badge interaction. */
+
+/* @component TaskRow */
+.taskRow {
+  --t1: var(--task-row-t1);
+  --t2: var(--task-row-t2);
+  --t3: var(--task-row-t3);
+  --t4: var(--task-row-t4);
+  display: grid;
+  grid-template-columns: var(--control-height) var(--control-height) minmax(0, 1fr) var(
+      --control-height
+    );
+  align-items: center;
+  min-inline-size: 0;
+  min-block-size: var(--layout-row-min);
+  column-gap: 0;
+  padding: var(--layout-row-padding) var(--space-1);
+  border-radius: var(--layout-row-radius);
+  position: relative;
+  transition:
+    transform var(--motion-release-duration) var(--ease-release),
+    box-shadow var(--motion-release-duration) var(--ease-state),
+    background-color var(--motion-check-duration) var(--ease-state),
+    border-color var(--motion-hover-duration) var(--ease-state);
+}
+.rowGrip {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  cursor: grab;
+}
+.rowGrip:active {
+  cursor: grabbing;
+}
+.rowCheck {
+  grid-column: 2;
+  grid-row: 1 / 3;
+}
+.taskLink {
+  grid-column: 3;
+  grid-row: 1;
+  min-inline-size: 0;
+  min-block-size: var(--control-height);
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: start;
+  color: inherit;
+  cursor: pointer;
+  font: var(--weight-semibold) var(--text-sm) / var(--line-label) var(--font-text);
+}
+.taskTitle {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.taskLink:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius-small);
+}
+.rowMeta {
+  grid-column: 3;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  padding-block-start: var(--space-1);
+}
+.rowDate {
+  font: var(--weight-regular) var(--text-xs) / var(--line-label) var(--font-mono);
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+.rowDate[data-overdue='true'] {
+  color: var(--color-danger);
+}
+.rowOpen {
+  grid-column: 4;
+  grid-row: 1 / 3;
+}
+@media (hover: hover) {
+  .taskRow:hover:not([data-dragging='true']) {
+    --t4: var(--elevation-raised);
+    --t3: var(--color-edge-hover);
+  }
+}
+.taskRow[data-selected='true'],
+.taskRow:focus-within {
+  --t1: var(--task-row-selected-t1);
+  --t3: var(--task-row-selected-t3);
+  box-shadow:
+    inset var(--selection-rule-width) 0 0 var(--task-row-selected-rule),
+    inset 0 var(--border-width) 0 var(--t2),
+    var(--t4);
+}
+.taskRow:has(.taskLink:active) {
+  box-shadow:
+    var(--shade-pressed),
+    inset 0 0 0 transparent,
+    var(--elevation-contact);
+  transition-duration: var(--motion-press-duration);
+}
+.taskRow[data-done='true'] {
+  --t1: var(--task-row-done-t1);
+  --t4: var(--task-row-done-t4);
+}
+.taskRow[data-done='true'] .taskTitle {
+  color: var(--task-row-done-text);
+  text-decoration: line-through;
+}
+.taskTitle {
+  transition: color var(--motion-check-duration) var(--ease-state);
+}
+.taskRow[data-dragging='true'] {
+  --t1: var(--task-row-drag-t1);
+  --t3: var(--task-row-drag-t3);
+  --t4: var(--task-row-drag-t4);
+  z-index: var(--z-drag);
+  transform: translateY(var(--layout-drag-lift)) rotate(var(--layout-drag-rotate))
+    scale(var(--move-drag-scale));
+}
+.taskRow[data-keyboard='true'] {
+  transform: none;
+  transition: none;
+}
+.taskRow[data-keyboard='true'] .taskTitle,
+.taskRow[data-keyboard='true'] .checkbox,
+.taskRow[data-keyboard='true'] .checkGlyph {
+  transition: none;
+}
+.taskRow[data-disabled='true'] {
+  --t1: var(--control-disabled-t1);
+  --t3: var(--control-disabled-t3);
+  color: var(--color-disabled-text);
+  transform: none;
+}
+.taskRow[data-result='error'] {
+  --t3: var(--color-danger);
+}
+@container task-pane (width < 360px) {
+  .taskRow {
+    grid-template-columns: var(--control-height) var(--control-height) minmax(0, 1fr);
+    min-block-size: var(--layout-row-narrow-min);
+  }
+  .rowOpen {
+    display: none;
+  }
+}
+
+/* @component TaskList */
+.taskList {
+  --t1: var(--task-list-t1);
+  --t2: var(--task-list-t2);
+  --t3: var(--task-list-t3);
+  --t4: var(--task-list-t4);
+  display: grid;
+  align-content: start;
+  gap: var(--layout-row-gap);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+  border-radius: var(--radius-control);
+}
+.rowSlot {
+  display: grid;
+  grid-template-rows: 1fr;
+  min-inline-size: 0;
+}
+.rowClip {
+  position: relative;
+  min-block-size: 0;
+  min-inline-size: 0;
+  overflow: clip;
+  padding-block: var(--space-1);
+  padding-inline: var(--space-1);
+}
+/* ROW LIFECYCLE — the list drives these phases (features/tasks/presence.ts) and moves each one on
+   when its animations end, so every duration here is the phase's real length. */
+/* Reopened, or moved into Completed: the row enters. */
+.rowSlot[data-phase='entering'] .taskRow {
+  animation: enter var(--motion-row-enter-duration) var(--ease-enter);
+}
+/* Created: the pending row already entered, so the confirmed one washes and says so. */
+.rowSlot[data-phase='created'] .taskRow {
+  animation: wash var(--motion-wash-duration) var(--ease-state);
+}
+/* Back after a failed delete: it fades in from the error edge. */
+.rowSlot[data-phase='restored'] .taskRow {
+  animation: restore var(--motion-error-duration) var(--ease-state);
+}
+/* Completing (a ghost): the box fills, the check draws and the title settles to done ink, then the
+   checked result holds long enough to read before the row leaves. */
+.rowSlot[data-phase='completing'] .taskRow {
+  animation:
+    hold calc(var(--motion-check-duration) + var(--motion-row-hold-duration)) linear,
+    swipeReturn var(--motion-swipe-settle-duration) var(--ease-release) both;
+}
+/* A swiped row settles back from where the finger let go while its check draws (a checkbox
+   completion starts at 0, so this moves nothing). Reduce makes the return direct. */
+@keyframes swipeReturn {
+  from {
+    transform: translateX(var(--ghost-from-x, 0px));
+  }
+}
+.rowSlot[data-phase='completing'] .checkbox {
+  animation: checkFill var(--motion-check-duration) var(--ease-state) both;
+}
+.rowSlot[data-phase='completing'] .checkGlyph {
+  animation: checkDraw var(--motion-check-duration) var(--ease-state) both;
+}
+.rowSlot[data-phase='completing'] .taskTitle {
+  animation: inkSettle var(--motion-check-duration) var(--ease-state) both;
+}
+/* Leaving (a ghost): a deleted row slides out, a completed one sinks; its slot collapses. */
+.rowSlot[data-phase='leaving'] {
+  animation: collapse var(--motion-collapse-duration) var(--ease-exit) var(--motion-collapse-delay)
+    both;
+}
+.rowSlot[data-phase='leaving'] .taskRow {
+  animation: leave var(--motion-row-exit-duration) var(--ease-exit) both;
+  pointer-events: none;
+}
+.rowSlot[data-phase='leaving'][data-exit='complete'] .taskRow {
+  animation-name: sink;
+}
+.rowSlot[data-phase='leaving'] .rowClip {
+  padding-block: 0;
+}
+/* The result label is a real item in the row's metadata, so the title reflows around it instead
+   of being covered: readable for the result dwell, then gone. Visual only (aria-hidden on a live
+   row); the action itself is what assistive technology reports. */
+.rowResult {
+  display: none;
+  padding: 0 var(--space-2);
+  border: var(--border-width) solid var(--color-edge);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-success);
+  font: var(--weight-medium) var(--text-xs) / var(--line-label) var(--font-text);
+  white-space: nowrap;
+}
+.rowSlot:is([data-phase='created'], [data-phase='completing'], [data-phase='leaving']) .rowResult {
+  display: inline-block;
+}
+.rowSlot[data-phase='created'] .rowResult {
+  animation: resultLabel var(--feedback-result-time) var(--ease-state) both;
+}
+.rowSlot[data-phase='completing'] .rowResult {
+  animation: fadeIn var(--motion-change-duration) var(--ease-state) both;
+}
+@keyframes wash {
+  from {
+    background-color: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
+  }
+}
+@keyframes restore {
+  from {
+    opacity: 0;
+    border-color: var(--color-danger);
+  }
+}
+@keyframes hold {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes checkFill {
+  from {
+    background-color: var(--checkbox-t1);
+    border-color: var(--checkbox-t3);
+    color: var(--checkbox-t1);
+  }
+}
+@keyframes checkDraw {
+  from {
+    opacity: 1;
+    stroke-dashoffset: var(--layout-check-dash);
+  }
+  to {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes inkSettle {
+  from {
+    color: var(--color-text);
+    text-decoration-color: transparent;
+  }
+}
+@keyframes collapse {
+  from {
+    grid-template-rows: 1fr;
+  }
+  to {
+    grid-template-rows: 0fr;
+  }
+}
+@keyframes resultLabel {
+  0% {
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.dropTarget {
+  --t1: var(--task-row-drop-t1);
+  --t3: var(--task-row-drop-t3);
+  border-style: dashed;
+  padding: var(--space-3);
+  color: var(--color-accent);
+  font-size: var(--text-xs);
+}
+.dropCue {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+/* dnd-kit owns the OUTER rowSlot transform. Visual lift belongs to inner taskRow. */
+
+/* @component Header */
+.appBar {
+  --t1: var(--app-bar-t1);
+  --t2: var(--app-bar-t2);
+  --t3: var(--app-bar-t3);
+  --t4: var(--app-bar-t4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-inline: var(--space-5);
+  border-radius: var(--layout-header-radius);
+  z-index: var(--z-header);
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+  font: var(--weight-bold) var(--text-brand) / 1 var(--font-display);
+  letter-spacing: var(--p-tracking-brand);
+  white-space: nowrap;
+}
+.brandMark {
+  inline-size: var(--layout-mark-size);
+  block-size: var(--layout-mark-size);
+  flex-shrink: 0;
+}
+.account {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+.accountEmail {
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.navigation {
+  --t1: var(--navigation-t1);
+  --t2: var(--navigation-t2);
+  --t3: var(--navigation-t3);
+  --t4: var(--navigation-t4);
+  border-radius: var(--radius-small);
+}
+.counter {
+  --t1: var(--app-counter-t1);
+  --t2: var(--app-counter-t2);
+  --t3: var(--app-counter-t3);
+  --t4: var(--app-counter-t4);
+  color: var(--app-counter-text);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--p-r-signature);
+  transform: rotate(var(--layout-counter-rotate));
+}
+.counterNumber {
+  font: var(--weight-semibold) var(--text-xl) / 1 var(--font-display);
+}
+.counterLabel {
+  max-inline-size: var(--space-5);
+  font-size: var(--text-xs);
+  line-height: var(--line-label);
+}
+
+/* @component Frame */
+.frameHead {
+  --t1: var(--frame-head-t1);
+  --t2: var(--frame-head-t2);
+  --t3: var(--frame-head-t3);
+  --t4: var(--frame-head-t4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+.frameBar {
+  --t1: var(--frame-bar-t1);
+  --t2: var(--frame-bar-t2);
+  --t3: var(--frame-bar-t3);
+  --t4: var(--frame-bar-t4);
+  padding: var(--space-4);
+}
+.frameBody {
+  --t1: var(--frame-body-t1);
+  --t2: var(--frame-body-t2);
+  --t3: var(--frame-body-t3);
+  --t4: var(--frame-body-t4);
+}
+.panel {
+  --t1: var(--panel-t1);
+  --t2: var(--panel-t2);
+  --t3: var(--panel-t3);
+  --t4: var(--panel-t4);
+  border-radius: var(--layout-panel-radius);
+  overflow: clip;
+}
+.detailHead {
+  --t1: var(--detail-head-t1);
+}
+.caption {
+  font: var(--weight-medium) var(--text-xs) / var(--line-label) var(--font-mono);
+  letter-spacing: var(--p-tracking-label);
+  color: var(--color-muted);
+}
+.pageSubtitle {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* @component Dialog */
+.dialog {
+  --t1: var(--dialog-t1);
+  --t2: var(--dialog-t2);
+  --t3: var(--dialog-t3);
+  --t4: var(--dialog-t4);
+  inset: 0;
+  margin: auto;
+  padding: 0;
+  inline-size: min(var(--layout-dialog-max), calc(100vw - 2 * var(--layout-dialog-margin)));
+  max-block-size: calc(100dvh - 2 * var(--layout-dialog-margin));
+  border-radius: var(--radius-surface);
+  overflow: hidden;
+}
+.dialog[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  animation: dialogEnter var(--motion-dialog-enter-duration) var(--ease-release);
+}
+.dialog::backdrop {
+  background: var(--color-scrim);
+  backdrop-filter: blur(var(--layout-dialog-blur));
+  animation: fadeIn var(--motion-dialog-enter-duration) var(--ease-state);
+}
+.dialog[data-phase='closing'] {
+  animation: dialogLeave var(--motion-dialog-exit-duration) var(--ease-exit) both;
+}
+.dialog[data-phase='closing']::backdrop {
+  animation: fadeOut var(--motion-dialog-exit-duration) var(--ease-exit) both;
+}
+.dialogHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-5);
+}
+.dialogTitle {
+  margin: 0;
+  font: var(--weight-semibold) var(--text-lg) / var(--line-heading) var(--font-display);
+}
+.dialogBody {
+  min-block-size: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 0 var(--space-5) var(--space-5);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+.dialogTaskName {
+  display: block;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+  margin-block-end: var(--space-2);
+}
+.dialogFoot {
+  display: flex;
+  justify-content: end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-block-start: var(--border-width) solid var(--color-edge);
+  background: var(--color-canvas);
+}
+.dialog[data-result='error'] {
+  --t3: var(--color-danger);
+}
+.dialog[data-motion='instant'] {
+  animation: none;
+}
+.dialog[data-motion='instant']::backdrop {
+  animation: none;
+}
+@media (width < 600px) {
+  .dialog {
+    inset: auto 0 0;
+    margin: auto var(--layout-dialog-margin)
+      max(var(--layout-dialog-margin), var(--layout-safe-bottom));
+    border-radius: var(--radius-surface) var(--radius-surface) var(--radius-control)
+      var(--radius-control);
+  }
+}
+
+/* @component Toast */
+.toast {
+  --t1: var(--toast-t1);
+  --t2: var(--toast-t2);
+  --t3: var(--toast-t3);
+  --t4: var(--toast-t4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  font-size: var(--text-sm);
+  pointer-events: auto;
+  animation: toastEnter var(--motion-toast-enter-duration) var(--ease-release);
+}
+.toastCopy {
+  flex: 1;
+  min-inline-size: 0;
+}
+.toastIcon {
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
+  color: var(--color-success);
+}
+.toast[data-kind='error'] .toastIcon {
+  color: var(--color-danger);
+}
+.toast[data-phase='dwelling'] {
+  animation:
+    toastEnter var(--motion-toast-enter-duration) var(--ease-release),
+    hold var(--feedback-result-time) linear var(--motion-toast-enter-duration);
+}
+.toast[data-phase='leaving'] {
+  animation: toastLeave var(--motion-toast-exit-duration) var(--ease-exit) both;
+}
+
+/* @component Skeleton */
+.skeletonRow {
+  --t1: var(--color-surface);
+  --t2: var(--skeleton-t2);
+  --t3: var(--skeleton-t3);
+  --t4: var(--skeleton-t4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-control);
+}
+.skeleton {
+  --t1: var(--skeleton-t1);
+  --t2: var(--skeleton-t2);
+  --t3: var(--skeleton-t3);
+  --t4: var(--skeleton-t4);
+  position: relative;
+  overflow: hidden;
+  block-size: var(--layout-skeleton-line);
+  border-radius: var(--radius-small);
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--skeleton-sheen);
+  transform: translateX(calc(-1 * var(--layout-shimmer-travel)));
+  animation: shimmer var(--motion-skeleton-period) var(--ease-state) infinite;
+}
+.skeletonCheck {
+  inline-size: var(--layout-skeleton-check);
+  block-size: var(--layout-skeleton-check);
+  flex-shrink: 0;
+}
+.skeletonCopy {
+  display: grid;
+  gap: var(--space-2);
+  flex: 1;
+}
+.skeletonShort {
+  inline-size: 55%;
+  block-size: var(--layout-skeleton-short);
+}
+@keyframes shimmer {
+  to {
+    transform: translateX(var(--layout-shimmer-travel));
+  }
+}
+
+/* @component Empty */
+.empty {
+  --t1: var(--empty-t1);
+  --t2: var(--empty-t2);
+  --t3: var(--empty-t3);
+  --t4: var(--empty-t4);
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: var(--space-3);
+  min-block-size: var(--layout-empty-min);
+  padding: var(--space-6);
+  border-radius: var(--radius-surface);
+}
+.stateTitle {
+  margin: 0;
+  font: var(--weight-semibold) var(--text-lg) / var(--line-heading) var(--font-display);
+}
+.stateCopy {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+.stateIcon {
+  inline-size: var(--space-6);
+  block-size: var(--space-6);
+  color: var(--color-accent);
+}
+
+/* @component Error */
+.error {
+  --t1: var(--error-t1);
+  --t2: var(--error-t2);
+  --t3: var(--error-t3);
+  --t4: var(--error-t4);
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: var(--space-3);
+  min-block-size: var(--layout-empty-min);
+  padding: var(--space-6);
+  border-radius: var(--radius-surface);
+}
+.error .stateIcon {
+  color: var(--color-danger);
+}
+
+/* END COMPONENT RECIPES */
+
+/* ACCESSIBILITY OVERRIDES — reduced motion keeps colour and opacity crossfades (the tokens make
+   them 150ms) and removes movement: the --move-* amplitudes are identity, so every keyframe above
+   is a plain fade, and the rules below stop what the tokens can't (loops, stroke travel, the slot
+   collapse, transforms written into a state). dnd-kit's OUTER sortable transform still follows the
+   pointer; it is not animated. */
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .skeleton::after {
+    animation: none;
+  }
+  .skeleton::after {
+    display: none;
+  }
+  .checkGlyph {
+    stroke-dashoffset: 0;
+  }
+  .rowSlot[data-phase='completing'] .checkGlyph {
+    animation-name: fadeIn;
+  }
+  .interactive:hover:not(:disabled):not([aria-disabled='true']),
+  .interactive:active:not(:disabled):not([aria-disabled='true']),
+  .button:is(.primary, .danger)[data-released='true'],
+  .fieldControl:hover,
+  .fieldControl:active,
+  .search:hover,
+  .search:active,
+  .checkInput:hover + .checkbox,
+  .checkInput:active + .checkbox,
+  .taskRow:hover,
+  .taskRow:has(.taskLink:active),
+  .taskRow[data-dragging='true'] {
+    transform: none;
+  }
+  .dialog::backdrop {
+    backdrop-filter: none;
+  }
+}
+/* Explicit keyboard/presentation flag: used on entering/leaving slots and dialog/toast. */
+.instant,
+.instant *,
+.instant::before,
+.instant::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* PORTAL SEGMENTS — these rules belong to this same CSS Module as dialog/toast. */
+@media (horizontal-viewport-segments: 2) {
+  .dialog {
+    inset-inline-start: env(viewport-segment-left 1 0);
+    inset-inline-end: 0;
+    inline-size: min(
+      var(--layout-dialog-max),
+      calc(env(viewport-segment-width 1 0) - 2 * var(--layout-dialog-margin))
+    );
+    margin-inline: auto;
+  }
+}

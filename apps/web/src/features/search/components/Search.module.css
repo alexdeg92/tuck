@@ -1,0 +1,322 @@
+/*
+ * Search marks, row excerpts, the "did you mean" notice, the open task's finder and its read
+ * view. Marks are opaque fills with an underline, so they read without hue.
+ */
+
+/* Marks: text annotations, not controls. Font weight is inherited, so marking never reflows. */
+.mark {
+  --mark-fill: #4f6977;
+  --mark-ink: #ffffff;
+  border-radius: 2px;
+  padding: 0;
+  background: var(--mark-fill);
+  color: var(--mark-ink);
+  font: inherit;
+  text-decoration: underline 1px solid;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 0.12em;
+  outline: 2px solid transparent;
+  outline-offset: 1px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition:
+    background-color var(--motion-check-duration) var(--ease-state),
+    color var(--motion-check-duration) var(--ease-state),
+    outline-color var(--motion-check-duration) var(--ease-state);
+}
+.mark[aria-current='true'] {
+  --mark-fill: #205563;
+  text-decoration-style: double;
+  outline-color: #205563;
+}
+@media (forced-colors: active) {
+  .mark {
+    background: Mark;
+    color: MarkText;
+  }
+  .mark[aria-current='true'] {
+    outline-color: MarkText;
+  }
+}
+
+/* A hit's summary under its title ("3 matches in notes"): passive text inside the row's link. */
+.summary {
+  display: block;
+  color: #4f6977;
+  font: 400 12px/18px var(--font-text);
+  overflow-wrap: anywhere;
+  animation: swapIn var(--motion-check-duration) var(--ease-state);
+}
+
+/* "Did you mean drawer?": one quiet line above the results. */
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  margin: 0;
+  padding: 8px 12px 4px;
+  color: var(--color-subtle);
+  font: 400 13px/18px var(--font-text);
+}
+.noticeQuiet {
+  color: var(--color-muted);
+}
+.suggestion {
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: transparent;
+  color: var(--color-accent);
+  font: 600 13px/18px var(--font-text);
+  cursor: pointer;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition:
+    background-color var(--motion-hover-duration) var(--ease-state),
+    color var(--motion-hover-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state),
+    transform var(--motion-release-duration) var(--ease-release);
+}
+/* A corrected word: underlined, so the change reads without colour. */
+.changed {
+  text-decoration: underline 1px solid;
+  text-underline-offset: 0.15em;
+}
+@media (hover: hover) {
+  .suggestion:hover {
+    background: color-mix(in srgb, var(--color-text) 8%, transparent);
+  }
+}
+.suggestion:active {
+  background: color-mix(in srgb, var(--color-text) 12%, transparent);
+  transform: scale(var(--press-scale));
+  transition-duration: var(--motion-press-duration);
+}
+.suggestion:focus-visible {
+  outline-color: var(--color-focus);
+}
+.suggestion:disabled {
+  opacity: 0.38;
+}
+
+/* The finder: a 48px row between the detail head and the note scroller. */
+.finder {
+  grid-row: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 4px;
+  min-block-size: 48px;
+  padding: 2px 8px 2px 16px;
+  border-block-end: 1px solid var(--color-edge);
+  background: var(--color-surface);
+  animation: finderIn var(--motion-row-enter-duration) var(--ease-enter);
+}
+@keyframes finderIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-message-y));
+  }
+}
+/* Cleared: the outgoing finder (inert, hidden from assistive tech) fades out, then leaves. */
+.finder[data-exiting] {
+  pointer-events: none;
+  animation: finderOut var(--motion-row-exit-duration) var(--ease-exit) forwards;
+}
+@keyframes finderOut {
+  to {
+    opacity: 0;
+  }
+}
+/* A new count or state crossfades in; the note itself never fades. */
+.swap {
+  animation: swapIn var(--motion-check-duration) var(--ease-state);
+}
+@keyframes swapIn {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes finderFade {
+  from {
+    opacity: 0;
+  }
+}
+.query {
+  flex: 1 1 6em;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: var(--radius-small);
+  color: var(--color-subtle);
+  font: 500 13px/20px var(--font-text);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color var(--motion-focus-duration) var(--ease-state);
+}
+.query:focus-visible {
+  outline-color: var(--color-focus);
+}
+.counter {
+  min-inline-size: 56px;
+  text-align: center;
+  color: var(--color-text);
+  font: 400 11px/16px var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.status {
+  color: var(--color-muted);
+  font: 400 12px/16px var(--font-text);
+}
+.finderButton {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+  outline: 2px solid transparent;
+  outline-offset: -3px;
+  transition:
+    background-color var(--motion-hover-duration) var(--ease-state),
+    color var(--motion-hover-duration) var(--ease-state),
+    opacity var(--motion-check-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state);
+}
+/* The press scales the glyph, never the 44px target. */
+.finderButton svg {
+  inline-size: 16px;
+  block-size: 16px;
+  transition: transform var(--motion-release-duration) var(--ease-release);
+}
+@media (hover: hover) {
+  .finderButton:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-text) 12%, transparent);
+    color: var(--color-text);
+  }
+}
+.finderButton:active:not(:disabled) {
+  background: color-mix(in srgb, var(--color-text) 18%, transparent);
+  transition-duration: var(--motion-press-duration);
+}
+.finderButton:active:not(:disabled) svg {
+  transform: scale(var(--icon-press-scale));
+  transition-duration: var(--motion-press-duration);
+}
+.finderButton:focus-visible {
+  outline-color: var(--color-focus);
+}
+.finderButton:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+.finderNote {
+  flex-basis: 100%;
+  margin: 0 0 6px;
+  color: var(--color-muted);
+  font: 400 12px/16px var(--font-text);
+}
+.finderAction {
+  margin-inline-start: 4px;
+}
+
+/* The read view: the whole saved task, every match marked, selectable as text. */
+.readView {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-block-size: 100%;
+  padding: 32px 32px 24px;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  transition: outline-color var(--motion-focus-duration) var(--ease-state);
+  -webkit-user-select: text;
+  user-select: text;
+}
+.readView:focus-visible {
+  outline-color: var(--color-focus);
+}
+.readHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.readTitle {
+  flex: 1 1 12em;
+  margin: 0;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font: 600 30px/1.25 var(--font-display);
+  letter-spacing: -0.035em;
+}
+.readNotes {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--color-subtle);
+  font: 400 15px/1.85 var(--font-text);
+}
+.readEmpty {
+  color: var(--color-muted);
+}
+.items {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 16px 0 0;
+  border-block-start: 1px solid var(--color-edge);
+  list-style: none;
+}
+.itemsTitle {
+  margin: 0;
+  color: var(--color-muted);
+  font: 500 11px/16px var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.itemText {
+  display: block;
+  color: var(--color-text);
+  font: 500 14px/20px var(--font-text);
+}
+.itemNotes {
+  display: block;
+  margin-block-start: 2px;
+  white-space: pre-wrap;
+  color: var(--color-subtle);
+  font: 400 13px/20px var(--font-text);
+}
+
+@media (width < 600px) {
+  .readView {
+    padding: 20px 16px 24px;
+  }
+  .readTitle {
+    font-size: 24px;
+  }
+}
+
+/* Reduced motion: colour and opacity only. No scale, no travel, whatever the durations. */
+@media (prefers-reduced-motion: reduce) {
+  .finder {
+    animation-name: finderFade;
+  }
+  .finder[data-exiting] {
+    animation-name: finderOut;
+  }
+  .finderButton:active:not(:disabled) svg,
+  .suggestion:active {
+    transform: none;
+  }
+}

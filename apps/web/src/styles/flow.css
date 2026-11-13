@@ -1,0 +1,1573 @@
+/* App shell, list and search styling shared by every screen. */
+.srOnly {
+  position: absolute !important;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.flowIcon {
+  inline-size: 16px;
+  block-size: 16px;
+  flex-shrink: 0;
+}
+.masterBar {
+  gap: 12px;
+  padding-block-end: 14px;
+}
+.listCaption {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+/* Flush search field: one raised surface, no separate clear tile. */
+.search.searchNew {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-block-size: 36px;
+  block-size: 36px;
+  padding: 0;
+  --t1: var(--color-surface);
+  --t2: var(--color-highlight);
+  --t3: var(--color-control-edge);
+  --t4: var(--elevation-contact);
+  background: var(--color-surface);
+  border-radius: var(--radius-control);
+  transform: none;
+  /* Every search state keeps the same three parts in the same order (outer ring, inset
+     highlight, contact cast), so the ring can fade in: Chrome only interpolates shadow lists
+     whose layers line up. The ring is reserved here, transparent and without spread. */
+  box-shadow:
+    0 0 0 0 transparent,
+    inset 0 1px 0 var(--t2),
+    var(--t4);
+  transition:
+    border-color var(--motion-focus-duration) var(--ease-state),
+    box-shadow var(--motion-focus-duration) var(--ease-state),
+    background-color var(--motion-hover-duration) var(--ease-state),
+    transform var(--motion-release-duration) var(--ease-release),
+    outline-color var(--motion-focus-duration) var(--ease-state);
+}
+.searchNew .searchInput {
+  block-size: 100%;
+  inline-size: 100%;
+  padding: 0 36px;
+  font: 400 14px/20px var(--font-text);
+  border: 0;
+  background: none;
+  appearance: none;
+  outline: 0;
+  border-radius: inherit;
+}
+.searchNew .searchInput::-webkit-search-cancel-button,
+.searchNew .searchInput::-webkit-search-decoration {
+  appearance: none;
+}
+.searchNew .searchIcon {
+  position: absolute;
+  inset-inline-start: 12px;
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--color-muted);
+  pointer-events: none;
+}
+.searchNew[data-has-value='true'] .searchIcon {
+  color: var(--color-text);
+}
+.searchClear {
+  position: absolute;
+  inset-inline-end: 6px;
+  inline-size: 24px;
+  block-size: 24px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--color-muted);
+  cursor: pointer;
+  box-shadow: none;
+}
+.searchClear svg {
+  inline-size: 14px;
+  block-size: 14px;
+}
+.searchClear:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+@media (hover: hover) {
+  .search.searchNew:hover {
+    --t1: var(--color-surface);
+    --t3: var(--color-edge-hover);
+    background: var(--color-surface);
+    transform: none;
+    box-shadow:
+      0 0 0 0 transparent,
+      inset 0 1px 0 var(--color-highlight),
+      var(--elevation-contact);
+  }
+  .searchClear:hover {
+    background: color-mix(in srgb, var(--color-text) 8%, transparent);
+    color: var(--color-text);
+  }
+}
+.search.searchNew:focus-within {
+  --t1: var(--color-surface);
+  --t3: var(--color-accent);
+  background: var(--color-surface);
+  outline-color: transparent;
+  transform: none;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--color-accent) 18%, transparent),
+    inset 0 1px 0 var(--color-highlight),
+    var(--elevation-contact);
+}
+.search.searchNew:active {
+  transform: none;
+  --t1: var(--color-surface);
+  /* A press focuses the field: the ring's shape, not the base recipe's pressed inset. */
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--color-accent) 18%, transparent),
+    inset 0 1px 0 var(--color-highlight),
+    var(--elevation-contact);
+}
+.searchClear:active {
+  background: color-mix(in srgb, var(--color-text) 12%, transparent);
+}
+/* Rows: first-line alignment, icon-only grip, subtle selection. */
+.refinedList,
+.completedList {
+  background: none;
+  border: 0;
+  box-shadow: none;
+  gap: 4px;
+}
+.taskRow {
+  grid-template-columns: 24px 32px minmax(0, 1fr);
+  column-gap: 4px;
+  align-items: start;
+  min-block-size: 64px;
+  padding: 10px 10px 10px 6px;
+  --t4: var(--elevation-contact);
+  border-color: var(--p-neutral-200);
+}
+.rowClip {
+  padding: 3px;
+  overflow: clip;
+}
+.rowGrip {
+  grid-column: 1;
+  grid-row: 1/3;
+  display: grid;
+  align-content: start;
+  justify-content: center;
+  inline-size: 24px;
+  min-block-size: 44px;
+  padding: 4px 0 0;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  box-shadow: none;
+  color: var(--color-muted);
+  cursor: grab;
+  opacity: 0;
+  transition: opacity var(--motion-hover-duration) var(--ease-state);
+}
+.rowGrip svg {
+  inline-size: 14px;
+  block-size: 16px;
+}
+.rowGrip:disabled {
+  opacity: 0 !important;
+  cursor: default;
+}
+.rowGrip:active {
+  cursor: grabbing;
+}
+.rowGrip:focus-visible {
+  opacity: 1;
+  outline-color: var(--color-focus);
+}
+.rowCheck {
+  grid-column: 2;
+  grid-row: 1/3;
+  align-self: start;
+}
+.rowCheck .checkControl {
+  inline-size: 32px;
+  block-size: 44px;
+  display: block;
+}
+.rowCheck .checkbox {
+  position: absolute;
+  inset-inline-start: 8px;
+  inset-block-start: 4px;
+  inline-size: 16px;
+  block-size: 16px;
+  border-radius: 4px;
+}
+.rowCheck .checkGlyph {
+  inline-size: 12px;
+  block-size: 12px;
+}
+.taskLink {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 8px;
+  min-block-size: 24px;
+  padding: 2px 0 0;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+.taskTitle {
+  min-inline-size: 0;
+}
+.rowMeta {
+  grid-column: 3;
+  grid-row: 2;
+  padding-block-start: 3px;
+  gap: 8px;
+  align-items: center;
+}
+.priorityBadge {
+  padding: 2px 5px;
+  font-size: 10px;
+  line-height: 14px;
+}
+.priorityBadge svg {
+  inline-size: 9px;
+  block-size: 9px;
+}
+.rowDate {
+  font-family: var(--font-text);
+  font-size: 11px;
+  line-height: 16px;
+}
+.taskRow[data-selected='true'],
+.taskRow:focus-within {
+  --t1: color-mix(in srgb, var(--color-accent) 3%, var(--color-surface));
+  --t3: color-mix(in srgb, var(--color-accent) 28%, var(--color-edge));
+  box-shadow:
+    inset 0 1px 0 var(--color-highlight),
+    var(--elevation-contact);
+}
+.taskRow[data-done='true'] {
+  --t1: var(--color-canvas);
+  --t3: var(--p-neutral-200);
+  box-shadow:
+    inset 0 1px 0 var(--color-highlight),
+    var(--elevation-contact);
+}
+.taskRow[data-done='true'] .taskTitle {
+  font-weight: 400;
+  color: var(--color-muted);
+}
+@media (hover: hover) {
+  .taskRow:hover:not([data-dragging='true']) {
+    --t3: var(--p-neutral-300);
+    --t4: var(--elevation-raised);
+  }
+  .taskRow:hover .rowGrip:not(:disabled),
+  .taskRow:focus-within .rowGrip:not(:disabled) {
+    opacity: 1;
+  }
+  .checkInput:not(:checked):hover + .checkbox .checkGlyph {
+    stroke-dashoffset: 0;
+    opacity: 0.35;
+    color: var(--color-accent);
+  }
+}
+.checkInput:not(:checked) + .checkbox .checkGlyph {
+  opacity: 0;
+}
+.checkInput:checked + .checkbox .checkGlyph {
+  opacity: 1;
+  stroke-dashoffset: 0;
+}
+.checkInput:active:not(:disabled) + .checkbox {
+  --t1: var(--color-accent);
+  --t3: var(--p-accent-900);
+  color: var(--color-on-accent);
+}
+.checkInput:active:not(:disabled) + .checkbox .checkGlyph {
+  opacity: 1;
+  stroke-dashoffset: 0;
+  color: var(--color-on-accent);
+}
+.completedGroup {
+  margin-block-start: 20px;
+}
+.completedSummary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-block-size: 36px;
+  padding: 6px 12px;
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 500;
+  list-style: none;
+  cursor: pointer;
+  border-block-end: 1px solid var(--color-edge);
+}
+.completedSummary::-webkit-details-marker {
+  display: none;
+}
+.completedSummary > svg {
+  inline-size: 12px;
+  block-size: 12px;
+  transition: transform var(--motion-turn-duration) var(--ease-state);
+}
+.completedGroup[open] .completedSummary > svg {
+  transform: rotate(90deg);
+}
+.completedSummary:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+.completedCount {
+  margin-inline-start: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.completedList {
+  padding-block-start: 8px;
+}
+.completedSummary[data-received='true'] {
+  color: var(--color-accent);
+  background: var(--color-selection);
+}
+.mobileCapture {
+  display: none;
+}
+.createSearchResult {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  inline-size: 100%;
+  padding: 12px;
+  border: 1px dashed var(--color-edge);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-accent);
+  font-size: 13px;
+  text-align: start;
+  cursor: pointer;
+  margin-block-end: 8px;
+}
+.searchEmpty {
+  padding: 24px 12px;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+.searchEmpty p {
+  font-weight: 500;
+  color: var(--color-text);
+}
+.draftHost:empty {
+  display: none;
+}
+.draftHost {
+  padding: 3px;
+  margin-block-end: 8px;
+}
+.draftForm {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 36px;
+  gap: 6px 8px;
+  align-items: start;
+  padding: 12px;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--color-accent) 10%, transparent),
+    var(--elevation-contact);
+}
+.draftPlaceholder {
+  inline-size: 16px;
+  block-size: 16px;
+  border: 1px solid var(--color-edge);
+  border-radius: 4px;
+  margin: 7px 0 0 6px;
+}
+.draftTitle {
+  grid-column: 2;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 32px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  outline: 0;
+  color: var(--color-text);
+  font: 500 15px/24px var(--font-text);
+}
+.draftTitle::placeholder {
+  color: var(--color-muted);
+}
+.draftCreate {
+  grid-column: 3;
+  grid-row: 1;
+  inline-size: 36px;
+  block-size: 36px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-small);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+.draftCreate:disabled {
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+}
+.draftMeta {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.draftHint {
+  font-size: 10px;
+  color: var(--color-muted);
+}
+.draftCancel {
+  grid-column: 3;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--color-muted);
+  font: 400 10px var(--font-text);
+  cursor: pointer;
+}
+/* The task is a notes page. Metadata is a separate settings popover. */
+.notesHead {
+  padding: 12px 18px;
+  min-block-size: 62px;
+  gap: 8px;
+}
+.noteActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+.noteActions .button {
+  min-inline-size: 64px;
+  min-block-size: 36px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+.noteActions .buttonIcon {
+  inline-size: 14px;
+  block-size: 14px;
+}
+.taskSettingsButton,
+.backToTasks,
+.plainIcon {
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-block-size: 36px;
+  min-inline-size: 36px;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: none;
+  padding: 6px;
+  color: var(--color-subtle);
+  font: 500 12px/20px var(--font-text);
+  cursor: pointer;
+  box-shadow: none;
+}
+.backToTasks {
+  padding-inline-start: 0;
+}
+.taskSettingsButton:focus-visible,
+.backToTasks:focus-visible,
+.plainIcon:focus-visible,
+.draftCreate:focus-visible,
+.draftCancel:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+@media (hover: hover) {
+  .taskSettingsButton:hover,
+  .backToTasks:hover,
+  .plainIcon:hover,
+  .draftCreate:hover,
+  .draftCancel:hover {
+    background: var(--color-canvas);
+  }
+}
+.notesBody {
+  background: var(--color-surface);
+  padding: 0;
+}
+.noteCanvas {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100%;
+  padding: 32px 32px 24px;
+  gap: 24px;
+}
+.noteHeading {
+  margin: 0;
+  min-inline-size: 0;
+  outline: none;
+}
+.noteTitle {
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 36px;
+  field-sizing: content;
+  resize: none;
+  overflow: hidden;
+  padding: 0 0 6px;
+  border: 0;
+  border-block-end: 1px solid transparent;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--color-text);
+  font: 600 30px/1.25 var(--font-display);
+  letter-spacing: -0.035em;
+}
+.noteTitle:hover {
+  border-block-end-color: var(--color-edge);
+}
+.noteTitle:focus {
+  outline: 0;
+  border-block-end: 2px solid var(--color-accent);
+}
+.noteEditor {
+  flex: 1;
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 280px;
+  field-sizing: content;
+  resize: none;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--color-subtle);
+  font: 400 15px/1.85 var(--font-text);
+}
+.noteEditor::placeholder {
+  color: var(--color-muted);
+}
+.noteEditor:focus {
+  outline: 0;
+}
+.noteCanvas:has(.noteEditor:focus-visible) {
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+.noteFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-block-start: 1px solid var(--color-edge);
+  font-size: 11px;
+  color: var(--color-muted);
+  background: var(--color-surface);
+}
+.settingsPopover {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  padding: 0;
+  inline-size: 288px;
+  max-inline-size: calc(100vw - 32px);
+  max-block-size: calc(100dvh - 32px);
+  /* A frame: head and foot stay put, only .settingsBody scrolls. Not clipped, so the select and
+     calendar popovers rendered inside the sheet can extend past its edges. */
+  overflow: visible;
+  border-radius: var(--radius-surface);
+  /* Closed popovers must not expose fields to the a11y tree or Playwright (N rows × settings). */
+  display: none;
+  /* Exit: it fades and drops while still displayed (display and overlay switch at the end), and
+     takes no pointer input on the way out. */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(var(--move-sheet-y));
+  transition:
+    opacity var(--motion-dialog-exit-duration) var(--ease-exit),
+    transform var(--motion-dialog-exit-duration) var(--ease-exit),
+    display var(--motion-dialog-exit-duration) allow-discrete,
+    overlay var(--motion-dialog-exit-duration) allow-discrete;
+}
+.settingsPopover:popover-open {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  transition-duration: var(--motion-dialog-enter-duration);
+  transition-timing-function: var(--ease-enter);
+}
+@starting-style {
+  .settingsPopover:popover-open {
+    opacity: 0;
+    transform: translateY(var(--move-sheet-y));
+  }
+}
+.settingsHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-block-end: 1px solid var(--color-edge);
+}
+.settingsHead h2 {
+  margin: 0;
+  font: 600 14px var(--font-text);
+}
+.settingsTaskName {
+  margin: 0;
+  color: var(--color-text);
+  font: 500 15px / 1.4 var(--font-text);
+  overflow-wrap: anywhere;
+}
+.sheetOpenNotes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-block-size: 44px;
+  inline-size: 100%;
+  padding: 8px 0;
+  background: none;
+  border: 0;
+  border-block-end: 1px solid var(--color-edge);
+  color: var(--color-accent);
+  font: 500 14px var(--font-text);
+  cursor: pointer;
+}
+.sheetOpenNotes:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.settingsBody {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  min-block-size: 0;
+  padding: 12px 16px 16px;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.settingsBody .fieldControl {
+  min-block-size: 40px;
+  padding: 7px 10px;
+  font-size: 14px;
+}
+.settingsStatus {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.settingsFoot {
+  padding: 8px 16px;
+  border-block-start: 1px solid var(--color-edge);
+}
+.deleteTaskAction {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-block-size: 36px;
+  inline-size: 100%;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: var(--color-danger);
+  font: 500 13px var(--font-text);
+  cursor: pointer;
+}
+.deleteTaskAction:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+@container detail-pane (width < 600px) {
+  .noteSettingsLabel {
+    display: none;
+  }
+  .noteCanvas {
+    padding: 24px 20px;
+    gap: 20px;
+  }
+  .noteTitle {
+    font-size: 27px;
+  }
+  .notesHeaderLabel {
+    margin-inline-start: auto;
+    margin-inline-end: auto;
+  }
+  .notesHead:has(.detailBack) .notesHeaderLabel {
+    display: none;
+  }
+}
+@media (pointer: coarse) {
+  .rowGrip {
+    opacity: 1;
+  }
+  .search.searchNew {
+    block-size: 44px;
+    min-block-size: 44px;
+  }
+  .searchNew .searchInput {
+    font-size: 16px;
+    padding-inline-start: 40px;
+    padding-inline-end: 44px;
+  }
+  .searchNew .searchIcon {
+    inline-size: 18px;
+    block-size: 18px;
+  }
+  .searchClear {
+    inline-size: 32px;
+    block-size: 32px;
+  }
+  .taskSettingsButton,
+  .backToTasks,
+  .plainIcon {
+    min-block-size: 44px;
+    min-inline-size: 44px;
+  }
+}
+@media (width < 600px) {
+  /* No bottom capture bar; edge-to-edge list. */
+  .workspace {
+    padding-inline: 0;
+    padding-block: var(--space-3) var(--space-2);
+  }
+  .masterBar {
+    padding-inline: 16px;
+  }
+  .masterBody {
+    padding-inline: 0;
+  }
+  .listCaption {
+    padding-inline: 0;
+  }
+  .mobileCapture {
+    display: none;
+  }
+  .refinedList,
+  .completedList {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+  .rowClip {
+    padding-inline: 0;
+    border-radius: 0;
+  }
+  .completedSummary {
+    padding-inline: 16px;
+  }
+  .completedList {
+    padding-block-start: 0;
+  }
+  .search.searchNew {
+    block-size: 44px;
+    min-block-size: 44px;
+  }
+  .searchNew .searchInput {
+    font-size: 16px;
+    padding-inline-start: 40px;
+    padding-inline-end: 44px;
+  }
+  .searchNew .searchIcon {
+    inline-size: 18px;
+    block-size: 18px;
+  }
+  .searchClear {
+    inline-size: 32px;
+    block-size: 32px;
+  }
+  .rowGrip {
+    opacity: 1;
+  }
+  .taskRow {
+    grid-template-columns: 20px 28px minmax(0, 1fr) 44px;
+    padding: 10px 8px 10px 16px;
+    min-block-size: 64px;
+    border-radius: 0;
+  }
+  .taskRow[data-selected='true']::after {
+    inset-inline-start: 0;
+  }
+  .taskLink {
+    font-size: 14px;
+  }
+  .notesHead {
+    min-block-size: 56px;
+    padding: 8px 12px;
+  }
+  .taskSettingsButton,
+  .backToTasks,
+  .plainIcon {
+    min-block-size: 40px;
+    min-inline-size: 40px;
+  }
+  .noteActions .button {
+    min-block-size: 36px;
+  }
+  .settingsBody .fieldControl {
+    font-size: 16px;
+  }
+  .draftTitle {
+    font-size: 16px;
+  }
+  .draftHint {
+    font-size: 10px;
+  }
+  .noteEditor {
+    font-size: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .taskRow:hover {
+    transform: none;
+  }
+}
+
+.taskSettingsButton,
+.plainIcon {
+  display: inline-flex;
+}
+.noteCanvas:has(.noteEditor:focus-visible) {
+  box-shadow: inset 2px 0 0 var(--color-accent);
+}
+
+/* Density primitives and one framing language. */
+.app {
+  grid-template-rows: calc(56px + var(--layout-safe-top)) auto minmax(0, 1fr) calc(
+      var(--layout-footer) + var(--layout-safe-bottom)
+    );
+}
+.appBar.appBarSlot {
+  margin: 0;
+  border: 0;
+  border-block-end: 1px solid var(--color-edge);
+  border-radius: 0;
+  background: var(--color-surface);
+  box-shadow: none;
+  padding-inline: max(20px, var(--layout-safe-left)) max(20px, var(--layout-safe-right));
+}
+.refinedList,
+.completedList {
+  gap: var(--layout-row-gap);
+  background: var(--p-list-fill);
+  border: var(--p-list-border) solid var(--color-edge);
+  border-radius: var(--p-list-radius);
+  box-shadow: var(--p-list-cast);
+}
+.rowClip {
+  padding: var(--p-row-clip);
+  overflow: clip;
+}
+.taskRow {
+  position: relative;
+  grid-template-columns: var(--p-row-columns);
+  min-block-size: var(--p-row-min);
+  padding: var(--p-row-pad-y) 8px var(--p-row-pad-y) 4px;
+  column-gap: 4px;
+  row-gap: 0;
+  border-width: var(--p-row-border);
+  border-color: var(--color-edge);
+  border-radius: var(--layout-row-radius);
+  box-shadow: var(--p-row-cast);
+  transform: none;
+}
+.taskRow:focus-within {
+  --t1: var(--color-surface);
+  --t3: var(--color-edge);
+  box-shadow: var(--p-row-cast);
+}
+.taskRow[data-selected='true'] {
+  --t1: color-mix(in srgb, var(--color-accent) 16%, var(--color-surface));
+  --t3: var(--color-edge);
+  box-shadow: var(--p-row-cast);
+}
+.taskRow[data-selected='true']::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 2px;
+  background: var(--color-accent);
+  pointer-events: none;
+}
+.taskRow[data-done='true'] {
+  box-shadow: var(--p-row-cast);
+}
+.rowSlot:last-child .taskRow {
+  border-block-end-width: var(--p-row-last-border);
+}
+.rowGrip {
+  inline-size: 20px;
+  min-block-size: var(--p-row-hit);
+  grid-row: var(--p-row-span);
+  padding-block-start: 4px;
+}
+.rowCheck {
+  grid-row: var(--p-row-span);
+}
+.rowCheck .checkControl {
+  inline-size: 28px;
+  block-size: var(--p-row-hit);
+}
+.rowCheck .checkbox {
+  inset-inline-start: 6px;
+  inset-block-start: 4px;
+}
+.taskLink {
+  align-self: var(--p-row-title-align);
+  min-block-size: 0;
+  min-inline-size: 0;
+  font-size: var(--p-row-title-size);
+  line-height: var(--p-row-title-line);
+  padding-block-start: 2px;
+  gap: 0;
+}
+.taskTitle {
+  overflow-wrap: anywhere;
+}
+.taskLink:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.rowMeta {
+  grid-column: var(--p-row-meta-col);
+  grid-row: var(--p-row-meta-row);
+  display: var(--p-row-meta-display);
+  grid-auto-flow: var(--p-row-meta-flow);
+  align-self: var(--p-row-meta-align);
+  align-items: baseline;
+  justify-content: start;
+  padding-block-start: var(--p-row-meta-pad);
+  gap: 6px;
+  min-inline-size: 0;
+  font-family: var(--p-row-meta-font);
+}
+.rowDate {
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+.priorityBadge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  padding: var(--p-meta-inset);
+  font: 400 10px/14px var(--p-row-meta-font);
+  border-radius: 3px;
+  box-shadow: none;
+  background: var(--p-meta-fill);
+  border: 1px solid var(--p-meta-edge);
+}
+.priorityBadge[data-priority='high'] {
+  color: var(--color-danger);
+}
+.priorityBadge[data-priority='low'] {
+  color: var(--color-muted);
+  border: 0;
+  padding: 0;
+  background: none;
+}
+.priorityBadge svg {
+  inline-size: 10px;
+  block-size: 10px;
+}
+@media (hover: hover) {
+  .taskRow:hover:not([data-dragging='true']) {
+    transform: none;
+    --t1: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
+    --t3: var(--color-edge);
+    box-shadow: var(--p-row-cast);
+  }
+  .taskRow[data-selected='true']:hover {
+    --t1: color-mix(in srgb, var(--color-accent) 20%, var(--color-surface));
+  }
+}
+.noteStatus {
+  font: 400 11px/16px var(--font-text);
+  color: var(--color-muted);
+}
+.notesHead {
+  min-block-size: 52px;
+  background: var(--color-surface);
+  box-shadow: none;
+  border: 0;
+  border-block-end: 1px solid var(--color-edge);
+}
+.noteActions {
+  min-inline-size: 0;
+}
+.noteStatus {
+  margin-inline-end: 4px;
+}
+.noteFoot {
+  display: none;
+}
+/* Filled controls: the fill carries hover (accent-600) and press (accent-800); the white layer only
+   marks the release trace. */
+.button:is(.primary, .danger)::before {
+  background: white;
+}
+.button:is(.primary, .danger).forcedHover::before {
+  opacity: var(--state-hover);
+}
+.button:is(.primary, .danger).forcedPressed::before {
+  opacity: var(--state-pressed);
+}
+.button:is(.primary, .danger).forcedRelease::before,
+.button:is(.primary, .danger)[data-released='true']::before {
+  opacity: 0.04;
+}
+.button:is(.primary, .danger).forcedRelease,
+.button:is(.primary, .danger)[data-released='true'] {
+  transform: translateY(var(--lift-hover));
+  box-shadow:
+    inset 0 1px 0 var(--color-highlight-hover),
+    inset 0 calc(-1 * var(--border-width)) 0 var(--color-inner-shade),
+    var(--elevation-raised);
+}
+.button.primary:is(.forcedHover, .forcedPressed, .forcedRelease) {
+  --t1: var(--button-primary-t1);
+}
+.button.danger:is(.forcedHover, .forcedPressed, .forcedRelease) {
+  --t1: var(--button-danger-t1);
+}
+.button.ghost:not(:disabled):not([aria-disabled='true']):not([aria-busy='true']) {
+  --t1: transparent;
+  --t2: transparent;
+  --t3: transparent;
+  --t4: none;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.button.ghost:is(.forcedHover, .forcedPressed, .forcedRelease) {
+  background: color-mix(in srgb, var(--color-text) 8%, transparent) !important;
+}
+@media (hover: hover) {
+  .button.ghost:hover:not(:disabled):not([aria-disabled='true']) {
+    background: color-mix(in srgb, var(--color-text) 8%, transparent);
+    box-shadow: none;
+  }
+}
+.button.ghost:active:not(:disabled) {
+  background: color-mix(in srgb, var(--color-text) 12%, transparent);
+  box-shadow: none;
+}
+.button.ghost::before {
+  background: transparent;
+}
+@media (prefers-reduced-motion: reduce) {
+  .button:is(.primary, .danger).forcedRelease,
+  .button:is(.primary, .danger)[data-released='true'] {
+    transform: none;
+  }
+}
+/* Narrow panes keep metadata below the title; longer content may grow a row. */
+.rowClip {
+  padding-block: 0;
+  overflow: visible;
+}
+.rowSlot[data-phase='leaving'] .rowClip {
+  overflow: clip;
+}
+.taskTitle {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+@container task-pane (width < 360px) {
+  .taskRow {
+    grid-template-columns: 20px 28px minmax(0, 1fr);
+  }
+  .taskLink {
+    align-self: start;
+  }
+  .rowMeta {
+    grid-column: 3;
+    grid-row: 2;
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+  }
+  .rowGrip,
+  .rowCheck {
+    grid-row: 1 / 3;
+  }
+}
+
+/*
+ * Phone layout. Must follow the list-card rules above so
+ * phone full-bleed wins over the inset list chrome.
+ */
+@media (width < 600px) {
+  .workspace {
+    padding-inline: 0;
+    padding-block-start: 12px;
+  }
+  .masterBar {
+    padding-inline: max(20px, var(--layout-safe-left)) max(20px, var(--layout-safe-right));
+    padding-block-end: 14px;
+    gap: 10px;
+  }
+  .masterBody {
+    padding: 0 0 20px;
+    scrollbar-gutter: auto;
+  }
+  .mobileCapture {
+    display: none !important;
+  }
+  .refinedList,
+  .completedList {
+    gap: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .rowClip {
+    padding: 0;
+    border-radius: 0;
+  }
+  .taskRow {
+    grid-template-columns: 24px 40px minmax(0, 1fr) 44px;
+    column-gap: 4px;
+    min-block-size: 44px;
+    padding: 0 max(8px, var(--layout-safe-right)) 0 max(12px, var(--layout-safe-left));
+    border-inline: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .taskRow[data-selected='true'],
+  .taskRow:focus-within,
+  .taskRow[data-done='true'] {
+    box-shadow: none;
+  }
+  .taskRow[data-selected='true']::after {
+    inset-inline-start: 0;
+  }
+  .rowSlot:last-child .taskRow {
+    border-block-end-width: 1px;
+  }
+  .rowGrip,
+  .rowCheck {
+    grid-row: 1 / 3;
+  }
+  .rowGrip {
+    inline-size: 24px;
+    min-block-size: 44px;
+    padding-block-start: 8px;
+  }
+  .rowCheck .checkControl {
+    inline-size: 40px;
+    block-size: 44px;
+  }
+  /* Metadata gets its own cell under the title; the options button owns column 4. */
+  .rowMeta {
+    grid-column: 3;
+    grid-row: 2;
+    display: flex;
+    flex-wrap: nowrap;
+    align-self: start;
+    overflow: hidden;
+    padding-block-start: 0;
+  }
+  .rowMeta:empty {
+    display: none;
+  }
+  .rowMeta .priorityBadge {
+    flex-shrink: 0;
+  }
+  .rowDate {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .completedSummary {
+    padding: 10px max(20px, var(--layout-safe-right)) 10px max(20px, var(--layout-safe-left));
+    min-block-size: 44px;
+  }
+  .completedList {
+    padding-block-start: 0;
+  }
+  .draftHost,
+  .createSearchResult {
+    margin-inline: 20px;
+  }
+  .createSearchResult {
+    inline-size: calc(100% - 40px);
+  }
+  .settingsPopover {
+    --move-sheet-y: var(--move-sheet-y-phone);
+    inset: auto 0 0 !important;
+    inline-size: 100%;
+    max-inline-size: 100%;
+    max-block-size: calc(100dvh - 56px);
+    border-radius: 12px 12px 0 0;
+    padding-block-end: var(--layout-safe-bottom);
+  }
+  .settingsHead {
+    padding: 12px 20px;
+  }
+  .settingsBody {
+    padding: 12px 20px 20px;
+    gap: 14px;
+  }
+  .settingsFoot {
+    padding: 8px 20px;
+  }
+  .deleteTaskAction {
+    min-block-size: 44px;
+  }
+  .settingsBody .fieldControl {
+    min-block-size: 44px;
+  }
+  .settingsHead .plainIcon {
+    min-block-size: 44px;
+    min-inline-size: 44px;
+  }
+  .settingsBody input,
+  .settingsBody select,
+  .settingsTaskName {
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+  }
+}
+
+/*
+ * MOTION. Every quiet control shares one seven-state recipe: rest is the
+ * settled end point; hover fades a 12% backplate in; press is fast, 18%, and nudges 1px (icons
+ * compress to .92); release settles back on the release ease; focus fades its ring in; disabled
+ * fades the content. Reduced motion keeps the colour and drops the movement.
+ */
+.plainIcon,
+.taskSettingsButton,
+.backToTasks,
+.searchClear,
+.draftCreate,
+.draftCancel,
+.sheetOpenNotes,
+.deleteTaskAction,
+.createSearchResult,
+.completedSummary {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition:
+    background-color var(--motion-hover-duration) var(--ease-state),
+    color var(--motion-hover-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state),
+    opacity var(--motion-hover-duration) var(--ease-state),
+    transform var(--motion-release-duration) var(--ease-release);
+}
+@media (hover: hover) {
+  .plainIcon:hover:not(:disabled),
+  .taskSettingsButton:hover,
+  .backToTasks:hover,
+  .searchClear:hover,
+  .draftCreate:hover:not(:disabled),
+  .draftCancel:hover:not(:disabled),
+  .sheetOpenNotes:hover,
+  .deleteTaskAction:hover,
+  .createSearchResult:hover,
+  .completedSummary:hover {
+    background-color: color-mix(in srgb, var(--color-text) 12%, transparent);
+  }
+}
+.plainIcon:active:not(:disabled),
+.taskSettingsButton:active,
+.backToTasks:active,
+.searchClear:active,
+.draftCreate:active:not(:disabled),
+.draftCancel:active:not(:disabled),
+.sheetOpenNotes:active,
+.deleteTaskAction:active,
+.createSearchResult:active,
+.completedSummary:active {
+  background-color: color-mix(in srgb, var(--color-text) 18%, transparent);
+  transform: translateY(var(--press-y));
+  transition-duration: var(--motion-press-duration);
+  transition-timing-function: var(--ease-press);
+}
+/* Icon-only controls compress instead of nudging. */
+.plainIcon:active:not(:disabled),
+.taskSettingsButton:active,
+.searchClear:active {
+  transform: scale(var(--icon-press-scale));
+}
+.plainIcon:focus-visible,
+.taskSettingsButton:focus-visible,
+.backToTasks:focus-visible,
+.searchClear:focus-visible,
+.draftCreate:focus-visible,
+.draftCancel:focus-visible,
+.sheetOpenNotes:focus-visible,
+.deleteTaskAction:focus-visible,
+.createSearchResult:focus-visible,
+.completedSummary:focus-visible {
+  outline-color: var(--color-focus);
+}
+.plainIcon:disabled,
+.draftCreate:disabled,
+.draftCancel:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+/* Change states. */
+.taskSettingsButton[aria-expanded='true'] {
+  background-color: var(--color-selection);
+  color: var(--color-accent);
+}
+.taskRow[data-dragging='true'] .rowGrip {
+  opacity: 1;
+  color: var(--color-accent);
+}
+.search.searchNew:has(.searchInput:not(:placeholder-shown)) {
+  --t3: var(--color-edge-hover);
+}
+/* The draft title and the notes fields are borderless text: an underline fades in on hover and
+   turns accent on focus; invalid or busy states tint it. */
+.draftTitle,
+.noteTitle,
+.noteEditor {
+  transition:
+    box-shadow var(--motion-focus-duration) var(--ease-state),
+    border-color var(--motion-focus-duration) var(--ease-state),
+    opacity var(--motion-hover-duration) var(--ease-state);
+}
+.noteCanvas:has(.noteEditor) {
+  transition: box-shadow var(--motion-focus-duration) var(--ease-state);
+}
+.draftTitle {
+  box-shadow: inset 0 -1px 0 transparent;
+}
+@media (hover: hover) {
+  .draftTitle:hover:not(:disabled) {
+    box-shadow: inset 0 -1px 0 var(--color-edge);
+  }
+}
+.draftTitle:focus-visible {
+  box-shadow: inset 0 -2px 0 var(--color-accent);
+}
+.draftTitle[aria-busy='true'],
+.draftTitle:disabled {
+  opacity: 0.6;
+}
+.noteTitle:focus-visible {
+  border-block-end-color: var(--color-accent);
+}
+.noteTitle[aria-invalid='true'] {
+  border-block-end-color: var(--color-danger);
+}
+/* The task title link: accent on hover, dims while pressed, its ring fades in on focus. */
+.taskLink {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition:
+    color var(--motion-hover-duration) var(--ease-state),
+    opacity var(--motion-release-duration) var(--ease-release),
+    outline-color var(--motion-focus-duration) var(--ease-state);
+}
+.taskLink:active {
+  opacity: 0.72;
+  transition-duration: var(--motion-press-duration);
+}
+/* The row: rows do not lift or scale, so hover tints the fill 14% and a press 22%. */
+.taskRow:active:not([data-dragging='true']) {
+  --t1: color-mix(in srgb, var(--color-accent) 22%, var(--color-surface));
+  transform: none;
+  transition-duration: var(--motion-press-duration);
+  transition-timing-function: var(--ease-press);
+}
+/* The grip: it takes the accent and a state layer while held, and settles back on release. */
+.rowGrip {
+  outline: 2px solid transparent;
+  outline-offset: 1px;
+  transition:
+    opacity var(--motion-hover-duration) var(--ease-state),
+    color var(--motion-release-duration) var(--ease-release),
+    background-color var(--motion-release-duration) var(--ease-release),
+    transform var(--motion-release-duration) var(--ease-release),
+    outline-color var(--motion-focus-duration) var(--ease-state);
+}
+.rowGrip:active:not(:disabled) {
+  color: var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-text) 18%, transparent);
+  transform: scale(var(--icon-press-scale));
+  transition-duration: var(--motion-press-duration);
+  transition-timing-function: var(--ease-press);
+}
+@media (hover: hover) {
+  .taskLink:hover {
+    color: var(--color-accent);
+  }
+}
+.taskLink:focus-visible {
+  outline-color: var(--color-focus);
+}
+/* Tinted rows (hover 14%, selected 16%, both 20%, press 22%) darken quiet metadata one step, so it
+   keeps 4.5:1 on the tint. */
+.rowDate,
+.priorityBadge[data-priority='low'] {
+  transition: color var(--motion-hover-duration) var(--ease-state);
+}
+.taskRow:is([data-selected='true'], :hover, :active)
+  :is(.rowDate:not([data-overdue='true']), .priorityBadge[data-priority='low']) {
+  color: var(--p-neutral-700);
+}
+
+/*
+ * The Trash: the list foot's way in, and the /trash page. Same type, edge and quiet
+ * icon buttons as the task list; the rows are read-only, so no grip or checkbox.
+ */
+a.trashLink.plainIcon {
+  display: inline-flex;
+  min-block-size: 44px;
+  text-decoration: none;
+}
+.trashCount {
+  min-inline-size: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--color-canvas);
+  color: var(--color-text);
+  font: 500 11px/18px var(--font-text);
+  text-align: center;
+}
+.trashHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  padding-block-end: var(--space-3);
+}
+.trashHead .backToTasks {
+  display: inline-flex;
+  flex-basis: 100%;
+  justify-content: flex-start;
+  text-decoration: none;
+}
+.trashHead h1 {
+  flex: 1;
+  margin: 0;
+}
+.trashHelper {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--color-muted);
+  font: 400 12px/18px var(--font-text);
+}
+.trashRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--p-row-min, 44px);
+  padding: 2px 4px 2px 12px;
+  border-block-end: var(--border-width) solid var(--color-edge);
+}
+.trashRow:last-child {
+  border-block-end: 0;
+}
+.trashRow .trashLink {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+  padding-block: 6px;
+  border-radius: 2px;
+  color: inherit;
+  text-decoration: none;
+}
+.trashRow .trashLink:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.trashRow .trashLink[aria-current='page'] .taskTitle {
+  color: var(--color-accent);
+}
+.trashRow[data-done='true'] .taskTitle {
+  color: var(--color-muted);
+  text-decoration: line-through;
+}
+.trashPurge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-muted);
+  font: 400 11px/16px var(--font-mono);
+}
+.trashPurge[data-today='true'] {
+  color: var(--color-danger);
+}
+.trashPurge .flowIcon {
+  inline-size: 12px;
+  block-size: 12px;
+}
+.trashActions {
+  display: flex;
+  flex-shrink: 0;
+}
+.trashActions .plainIcon {
+  display: inline-flex;
+  inline-size: 44px;
+  block-size: 44px;
+}
+.trashError {
+  margin: 0 0 var(--space-2);
+  color: var(--color-danger);
+}
+.trashEmpty {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6, 48px) var(--space-3);
+  color: var(--color-muted);
+  text-align: center;
+}
+.trashEmpty strong {
+  color: var(--color-text);
+}
+.trashEmpty p {
+  margin: 0;
+}
+@media (width < 600px) {
+  .trashHead {
+    padding-inline: 16px;
+  }
+  .trashEmpty {
+    padding-inline: 16px;
+  }
+}
+.trashEmpty a {
+  color: var(--color-accent);
+}

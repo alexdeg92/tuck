@@ -1,0 +1,554 @@
+/* Tuck 1.0 — approved direction C. Light only. No selectors beyond :root. */
+:root {
+  color-scheme: light;
+
+  /* LAYER 1 / PRIMITIVES — fixed values; comments preserve approved sRGB. */
+  /* Neutral 50–950. */
+  --p-neutral-50: oklch(0.98469 0.0034436 354.68929); /* #FCF9FA */
+  --p-neutral-100: oklch(0.957341 0.0069485 354.79718); /* #F5EFF1 */
+  --p-neutral-200: oklch(0.9127043 0.0121048 350.99643); /* #E9DFE3 */
+  --p-neutral-300: oklch(0.8459766 0.0217995 347.37687); /* #D8C7CF */
+  --p-neutral-400: oklch(0.7417064 0.0300652 349.74411); /* #BBA4AE */
+  --p-neutral-500: oklch(0.6244645 0.0360687 348.68795); /* #997F8B */
+  --p-neutral-600: oklch(0.5143805 0.0368059 348.01076); /* #785F6B */
+  --p-neutral-700: oklch(0.4290596 0.0350448 344.75253); /* #5E4854 */
+  --p-neutral-800: oklch(0.3492515 0.031257 341.61233); /* #46343F */
+  --p-neutral-900: oklch(0.2751261 0.0250637 337.8408); /* #30232C */
+  --p-neutral-950: oklch(0.2096442 0.0183068 338.93712); /* #1E151B */
+  /* Accent 50–950. */
+  --p-accent-50: oklch(0.9702455 0.0159321 358.03025); /* #FFF1F5 */
+  --p-accent-100: oklch(0.939281 0.0343154 354.91551); /* #FFE2EC */
+  --p-accent-200: oklch(0.8809203 0.0710366 355.05752); /* #FFC5DA */
+  --p-accent-300: oklch(0.8002588 0.1121562 356.80232); /* #F89FBF */
+  --p-accent-400: oklch(0.7040677 0.1547308 358.67941); /* #EA729E */
+  --p-accent-500: oklch(0.6136151 0.1759826 359.42107); /* #D34C81 */
+  --p-accent-600: oklch(0.5245466 0.1753164 0.01927); /* #B42E66 */
+  --p-accent-700: oklch(0.4502131 0.1498072 359.91539); /* #922452 */
+  --p-accent-800: oklch(0.3965149 0.1281067 359.11484); /* #791F45 */
+  --p-accent-900: oklch(0.3600708 0.1082624 358.80385); /* #671E3C */
+  --p-accent-950: oklch(0.2521526 0.0809935 356.48012); /* #3E0C23 */
+  /* Danger 50–950. */
+  --p-danger-50: oklch(0.9806724 0.0099708 1.97744); /* #FFF6F8 */
+  --p-danger-100: oklch(0.9568591 0.018074 0.39458); /* #FCECF0 */
+  --p-danger-200: oklch(0.8968941 0.0422211 359.38062); /* #F6D2DC */
+  --p-danger-300: oklch(0.7992313 0.0810798 0.21047); /* #EAA8BB */
+  --p-danger-400: oklch(0.6912196 0.1212682 2.53525); /* #D97A95 */
+  --p-danger-500: oklch(0.5778257 0.148464 6.67027); /* #BF4D6B */
+  --p-danger-600: oklch(0.5114586 0.1508958 9.07101); /* #AA3754 */
+  --p-danger-700: oklch(0.4695894 0.1462299 12.84208); /* #9B2C43 */
+  --p-danger-800: oklch(0.4046513 0.1261528 10.80233); /* #7E2238 */
+  --p-danger-900: oklch(0.3336491 0.0950629 10.97453); /* #5D1C2A */
+  --p-danger-950: oklch(0.2463538 0.0669402 8.91307); /* #3A101A */
+  /* Success 50–950. */
+  --p-success-50: oklch(0.9767052 0.0123377 157.00629); /* #F1FAF4 */
+  --p-success-100: oklch(0.9509461 0.0198673 154.89689); /* #E5F3E9 */
+  --p-success-200: oklch(0.8881331 0.0426382 154.92098); /* #C5E3CE */
+  --p-success-300: oklch(0.8040421 0.0699939 155.60161); /* #9BCDAC */
+  --p-success-400: oklch(0.6878573 0.0928451 155.54988); /* #69AC82 */
+  --p-success-500: oklch(0.5785683 0.0983461 155.12598); /* #448B60 */
+  --p-success-600: oklch(0.5058358 0.0970576 155.19528); /* #2E754C */
+  --p-success-700: oklch(0.4420765 0.0873246 154.8172); /* #23613D */
+  --p-success-800: oklch(0.3788786 0.0701331 156.04614); /* #1D4D32 */
+  --p-success-900: oklch(0.3298605 0.0569757 156.41548); /* #193E29 */
+  --p-success-950: oklch(0.2356154 0.0414616 156.55842); /* #0B2416 */
+  /* Warning 50–950. */
+  --p-warning-50: oklch(0.9868793 0.021403 95.27742); /* #FFFBEB */
+  --p-warning-100: oklch(0.9620713 0.0500289 90.95329); /* #FFF2CD */
+  --p-warning-200: oklch(0.9120599 0.0846124 92.04157); /* #F6E1A1 */
+  --p-warning-300: oklch(0.8324083 0.1154563 88.34507); /* #E7C46B */
+  --p-warning-400: oklch(0.7414514 0.1247166 82.32639); /* #D2A343 */
+  --p-warning-500: oklch(0.6266061 0.1198007 78.48001); /* #AF7E20 */
+  --p-warning-600: oklch(0.5372818 0.1049779 77.92632); /* #8F6514 */
+  --p-warning-700: oklch(0.4725181 0.0928605 80.92264); /* #76550C */
+  --p-warning-800: oklch(0.40781 0.0760063 78.33481); /* #604410 */
+  --p-warning-900: oklch(0.3573361 0.0621128 78.44273); /* #4E3811 */
+  --p-warning-950: oklch(0.2508621 0.0428746 78.16207); /* #2D1F07 */
+  --p-white: oklch(1 0 0);
+  --p-clear: transparent;
+  --p-shadow-rgb: 77 38 56; /* Rose-biased ink, never pure black. */
+  --p-gold-fill: oklch(0.9295977 0.0769856 92.08144);
+  --p-gold-highlight: oklch(0.9707174 0.0380925 90.64795);
+  --p-gold-edge: oklch(0.7881222 0.0970098 91.13603);
+  --p-gold-ink: oklch(0.4259664 0.0803416 86.3085);
+
+  --p-hairline: 1px;
+  --p-focus: 2px;
+  --p-focus-offset: 3px;
+  --p-zero: 0px;
+  --p-s1: 4px;
+  --p-s2: 8px;
+  --p-s3: 12px;
+  --p-s4: 16px;
+  --p-s5: 24px;
+  --p-s6: 32px;
+  --p-s7: 48px;
+  --p-s8: 64px;
+  --p-r-small: 7px;
+  --p-r-control: 12px;
+  --p-r-row: 15px;
+  --p-r-row-foot: 6px;
+  --p-r-tray: 18px;
+  --p-r-surface: 20px;
+  --p-r-panel: 22px;
+  --p-r-pill: 999px;
+  --p-r-signature: 30px;
+  --p-drag-scale: 1.02;
+  --p-control: 44px;
+  --p-icon: 18px;
+  --p-check: 20px;
+  --p-badge-icon: 11px;
+  --p-text-xs: 11px;
+  --p-text-sm: 13px;
+  --p-text-body: 15px;
+  --p-text-lg: 20px;
+  --p-text-xl: 30px;
+  --p-text-display: 42px;
+  --p-text-control: 16px;
+  --p-text-brand: 29px;
+  --p-text-list: 36px;
+  --p-text-auth: 64px;
+  --p-line-body: 1.5;
+  --p-line-heading: 1.16;
+  --p-line-label: 1.4;
+  --p-weight-regular: 400;
+  --p-weight-medium: 500;
+  --p-weight-semibold: 600;
+  --p-weight-bold: 700;
+  --p-tracking-tight: -0.04em;
+  --p-tracking-brand: -0.045em;
+  --p-tracking-label: 0.1em;
+  --p-opacity-focus: 0.12;
+  --p-opacity-dragged: 0.16;
+  --p-opacity-drag-source: 0.35;
+  --p-opacity-disabled-content: 0.38;
+  --p-opacity-disabled-container: 0.12;
+  --p-duration-none: 0ms;
+  --p-duration-shimmer: 1400ms;
+  --p-duration-toast: 4000ms;
+  --p-ease-linear: linear;
+  --p-z-base: 0;
+  --p-z-header: 10;
+  --p-z-drag: 30;
+  --p-z-toast: 40;
+
+  /* LAYER 2 / SEMANTICS — meaning and role; primitives stay above. */
+  --color-canvas: var(--p-neutral-100);
+  --color-surface: var(--p-neutral-50);
+  --color-field: var(--p-neutral-100);
+  --color-text: var(--p-neutral-900);
+  --color-muted: var(--p-neutral-600);
+  --color-subtle: var(--p-neutral-700);
+  --color-on-accent: var(--p-neutral-50);
+  --color-accent: var(--p-accent-700);
+  --color-accent-hover: var(--p-accent-600);
+  --color-accent-pressed: var(--p-accent-800);
+  --color-selection: var(--p-accent-50);
+  --color-selection-edge: var(--p-accent-400);
+  --color-focus: var(--p-accent-600);
+  --color-edge: var(--p-neutral-300);
+  --color-control-edge: var(--p-neutral-500);
+  --color-edge-hover: var(--p-neutral-600);
+  --color-danger: var(--p-danger-700);
+  --color-danger-hover: var(--p-danger-800);
+  --color-danger-tint: var(--p-danger-100);
+  --color-success: var(--p-success-700);
+  --color-success-tint: var(--p-success-100);
+  --color-warning: var(--p-warning-700);
+  --color-warning-tint: var(--p-warning-100);
+  --color-disabled-text: var(--p-neutral-600);
+  --color-disabled-fill: var(--p-neutral-200);
+  --color-disabled-edge: var(--p-neutral-300);
+  --color-state-layer: var(--p-neutral-900);
+  --color-field-hover: color-mix(in oklch, var(--color-state-layer) 8%, var(--color-field));
+  --color-field-focus: color-mix(in oklch, var(--color-state-layer) 12%, var(--color-field));
+  --color-field-pressed: color-mix(in oklch, var(--color-state-layer) 12%, var(--color-field));
+  --color-drag-fill: color-mix(in oklch, var(--p-accent-200) 16%, var(--color-surface));
+  --color-highlight: rgb(255 255 255 / 0.88);
+  --color-highlight-strong: var(--p-white);
+  --color-highlight-accent: rgb(255 255 255 / 0.25);
+  --color-highlight-hover: rgb(255 255 255 / 0.5);
+  --color-inner-shade: rgb(var(--p-shadow-rgb) / 0.04);
+  --color-scrim: rgb(var(--p-shadow-rgb) / 0.23);
+  --elevation-contact:
+    0 1px 1px rgb(var(--p-shadow-rgb) / 0.06), 0 2px 3px rgb(var(--p-shadow-rgb) / 0.025);
+  --elevation-raised:
+    0 2px 3px rgb(var(--p-shadow-rgb) / 0.08), 0 5px 10px -3px rgb(var(--p-shadow-rgb) / 0.1);
+  --elevation-floating:
+    0 3px 6px -2px rgb(var(--p-shadow-rgb) / 0.11), 0 12px 24px -7px rgb(var(--p-shadow-rgb) / 0.18);
+  --elevation-modal:
+    0 8px 16px -5px rgb(var(--p-shadow-rgb) / 0.16),
+    0 28px 64px -12px rgb(var(--p-shadow-rgb) / 0.24);
+  --shade-pressed: inset 0 2px 3px rgb(var(--p-shadow-rgb) / 0.22);
+  --shade-field: inset 0 2px 3px rgb(var(--p-shadow-rgb) / 0.035);
+  --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', sans-serif;
+  --font-text: 'DM Sans Variable', 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --text-xs: var(--p-text-xs);
+  --text-sm: var(--p-text-sm);
+  --text-body: var(--p-text-body);
+  --text-lg: var(--p-text-lg);
+  --text-xl: var(--p-text-xl);
+  --text-display: var(--p-text-display);
+  --text-control: var(--p-text-control);
+  --text-brand: var(--p-text-brand);
+  --text-list: var(--p-text-list);
+  --text-auth: var(--p-text-auth);
+  --line-body: var(--p-line-body);
+  --line-heading: var(--p-line-heading);
+  --line-label: var(--p-line-label);
+  --weight-regular: var(--p-weight-regular);
+  --weight-medium: var(--p-weight-medium);
+  --weight-semibold: var(--p-weight-semibold);
+  --weight-bold: var(--p-weight-bold);
+  --space-1: var(--p-s1);
+  --space-2: var(--p-s2);
+  --space-3: var(--p-s3);
+  --space-4: var(--p-s4);
+  --space-5: var(--p-s5);
+  --space-6: var(--p-s6);
+  --space-7: var(--p-s7);
+  --space-8: var(--p-s8);
+  --border-width: var(--p-hairline);
+  --focus-width: var(--p-focus);
+  --focus-offset: var(--p-focus-offset);
+  --radius-small: var(--p-r-small);
+  --radius-control: var(--p-r-control);
+  --radius-surface: var(--p-r-surface);
+  --radius-pill: var(--p-r-pill);
+  --control-height: var(--p-control);
+  --icon-size: var(--p-icon);
+  --lift-hover: var(--p-lift-hover);
+  --press-y: var(--p-press-y);
+  --press-scale: var(--p-press-scale);
+  --icon-press-scale: var(--p-icon-press-scale);
+  --check-press-scale: var(--p-check-press-scale);
+  --move-enter-y: var(--p-enter-y);
+  --move-complete-y: var(--p-complete-y);
+  --move-exit-x: var(--p-exit-x);
+  --move-dialog-y: var(--p-dialog-y);
+  --move-dialog-scale: var(--p-dialog-scale);
+  --move-sheet-y: var(--p-sheet-y);
+  --move-sheet-y-phone: var(--p-sheet-y-phone);
+  --move-menu-y: var(--p-menu-y);
+  --move-menu-exit-y: var(--p-menu-exit-y);
+  --move-toast-y: var(--p-toast-y);
+  --move-toast-exit-y: var(--p-toast-exit-y);
+  --move-message-y: var(--p-message-y);
+  --move-drag-scale: var(--p-drag-scale);
+  --state-hover: var(--p-opacity-hover);
+  --state-focus: var(--p-opacity-focus);
+  --state-pressed: var(--p-opacity-pressed);
+  --state-row-hover: var(--p-opacity-row-hover);
+  --state-row-pressed: var(--p-opacity-row-pressed);
+  --state-wash: var(--p-opacity-wash);
+  --state-dragged: var(--p-opacity-dragged);
+  --drag-source-opacity: var(--p-opacity-drag-source);
+  --motion-none: var(--p-duration-none);
+  --motion-hover-duration: var(--p-duration-hover);
+  --motion-press-duration: var(--p-duration-press);
+  --motion-release-duration: var(--p-duration-release);
+  --motion-focus-duration: var(--p-duration-focus);
+  --motion-change-duration: var(--p-duration-change);
+  --motion-check-duration: var(--p-duration-check);
+  --motion-turn-duration: var(--p-duration-check);
+  --motion-collapse-duration: var(--p-duration-exit);
+  --motion-collapse-delay: var(--p-duration-none);
+  --motion-row-enter-duration: var(--p-duration-enter);
+  --motion-content-enter-duration: var(--p-duration-content);
+  --motion-row-exit-duration: var(--p-duration-exit);
+  --motion-row-hold-duration: var(--p-duration-hold);
+  --motion-wash-duration: var(--p-duration-wash);
+  --motion-drag-lift-duration: var(--p-duration-change);
+  --motion-drag-settle-duration: var(--p-duration-settle);
+  --motion-swipe-settle-duration: var(--p-duration-settle);
+  --motion-dialog-enter-duration: var(--p-duration-enter);
+  --motion-dialog-exit-duration: var(--p-duration-exit);
+  --motion-menu-enter-duration: var(--p-duration-menu-enter);
+  --motion-menu-exit-duration: var(--p-duration-menu-exit);
+  --motion-backdrop-duration: var(--p-duration-change);
+  --motion-toast-enter-duration: var(--p-duration-toast-enter);
+  --motion-toast-exit-duration: var(--p-duration-toast-exit);
+  --motion-action-duration: var(--p-duration-change);
+  --motion-error-duration: var(--p-duration-change);
+  --motion-busy-period: var(--p-duration-spinner);
+  --motion-skeleton-period: var(--p-duration-shimmer);
+  --feedback-result-time: var(--p-duration-result);
+  --feedback-toast-time: var(--p-duration-toast);
+  --ease-state: var(--p-ease-standard);
+  --ease-press: var(--p-ease-press);
+  --ease-enter: var(--p-ease-standard);
+  --ease-release: var(--p-ease-release);
+  --ease-exit: var(--p-ease-exit);
+  --ease-linear: var(--p-ease-linear);
+  --z-base: var(--p-z-base);
+  --z-header: var(--p-z-header);
+  --z-drag: var(--p-z-drag);
+  --z-toast: var(--p-z-toast);
+  --layout-frame-max: 1360px;
+  --layout-readable-max: 720px;
+  --layout-list-desktop: 420px;
+  --layout-list-tablet: 360px;
+  --layout-gutter-phone: 16px;
+  --layout-gutter-cover: 12px;
+  --layout-gutter-tablet: 22px;
+  --layout-gutter-desktop: 40px;
+  --layout-gap-desktop: 32px;
+  --layout-gap-tablet: 24px;
+  --layout-crease-gutter: 32px;
+  --layout-header-desktop: 90px;
+  --layout-header-compact: 62px;
+  /* The phone note bar (one row carrying the open note's head). */
+  --layout-header-note: 56px;
+  --layout-footer: 28px;
+  --layout-detail-min: 280px;
+  --layout-empty-min: 224px;
+  --layout-dialog-max: 440px;
+  --layout-dialog-margin: 16px;
+  --layout-toast-max: 390px;
+  --layout-badge-pad-y: 3px;
+  --layout-badge-pad-x: 6px;
+  --layout-row-min: 78px;
+  --layout-row-narrow-min: 88px;
+  --layout-row-gap: 10px;
+  --layout-row-padding: 10px;
+  --layout-title-min: 96px;
+  --layout-notes-min: 160px;
+  --layout-skeleton-line: 14px;
+  --layout-skeleton-short: 9px;
+  --layout-skeleton-check: 20px;
+  --layout-shimmer-travel: 100%;
+  --layout-mark-size: 34px;
+  --layout-check-dash: 24;
+  --layout-dialog-blur: 3px;
+  --layout-counter-rotate: 4deg;
+  --layout-drag-rotate: 0.7deg;
+  --layout-drag-lift: -4px;
+  --layout-panel-radius: 22px 22px 7px 22px;
+  --layout-row-radius: 15px 15px 6px 15px;
+  --layout-header-radius: 20px;
+  --layout-safe-top: env(safe-area-inset-top, 0px);
+  --layout-safe-right: env(safe-area-inset-right, 0px);
+  --layout-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --layout-safe-left: env(safe-area-inset-left, 0px);
+
+  /* LAYER 3 / COMPONENTS — T1 body, T2 light, T3 edge/shade, T4 cast. */
+  /* button-primary */
+  --button-primary-t1: var(--color-accent);
+  --button-primary-t2: var(--color-highlight-accent);
+  --button-primary-t3: var(--p-accent-900);
+  --button-primary-t4: var(--elevation-raised);
+  /* button-secondary */
+  --button-secondary-t1: var(--color-surface);
+  --button-secondary-t2: var(--color-highlight);
+  --button-secondary-t3: var(--color-control-edge);
+  --button-secondary-t4: var(--elevation-contact);
+  /* button-ghost */
+  --button-ghost-t1: var(--color-surface);
+  --button-ghost-t2: var(--color-highlight);
+  --button-ghost-t3: var(--p-clear);
+  --button-ghost-t4: var(--elevation-contact);
+  /* button-danger */
+  --button-danger-t1: var(--color-danger);
+  --button-danger-t2: var(--color-highlight-accent);
+  --button-danger-t3: var(--p-danger-900);
+  --button-danger-t4: var(--elevation-raised);
+  /* icon-button */
+  --icon-button-t1: var(--color-surface);
+  --icon-button-t2: var(--color-highlight);
+  --icon-button-t3: var(--p-clear);
+  --icon-button-t4: var(--elevation-contact);
+  /* input */
+  --input-t1: var(--color-field);
+  --input-t2: var(--color-highlight);
+  --input-t3: var(--color-control-edge);
+  --input-t4: var(--elevation-contact);
+  /* search */
+  --search-t1: var(--color-field);
+  --search-t2: var(--color-highlight);
+  --search-t3: var(--color-control-edge);
+  --search-t4: var(--elevation-contact);
+  /* textarea */
+  --textarea-t1: var(--color-field);
+  --textarea-t2: var(--color-highlight);
+  --textarea-t3: var(--color-control-edge);
+  --textarea-t4: var(--elevation-contact);
+  /* checkbox */
+  --checkbox-t1: var(--color-surface);
+  --checkbox-t2: var(--color-highlight);
+  --checkbox-t3: var(--color-control-edge);
+  --checkbox-t4: var(--elevation-contact);
+  /* priority-badge */
+  --priority-badge-t1: var(--p-neutral-100);
+  --priority-badge-t2: var(--color-highlight);
+  --priority-badge-t3: var(--p-neutral-400);
+  --priority-badge-t4: var(--elevation-contact);
+  /* task-row */
+  --task-row-t1: var(--color-surface);
+  --task-row-t2: var(--color-highlight-strong);
+  --task-row-t3: var(--color-edge);
+  --task-row-t4: var(--elevation-raised);
+  /* task-list */
+  --task-list-t1: var(--color-canvas);
+  --task-list-t2: var(--color-highlight);
+  --task-list-t3: var(--color-canvas);
+  --task-list-t4: var(--elevation-contact);
+  /* app-bar */
+  --app-bar-t1: var(--color-surface);
+  --app-bar-t2: var(--color-highlight-strong);
+  --app-bar-t3: var(--color-edge);
+  --app-bar-t4: var(--elevation-raised);
+  /* navigation */
+  --navigation-t1: var(--color-canvas);
+  --navigation-t2: var(--color-highlight);
+  --navigation-t3: var(--color-edge);
+  --navigation-t4: var(--elevation-contact);
+  /* frame-head */
+  --frame-head-t1: var(--color-surface);
+  --frame-head-t2: var(--color-highlight);
+  --frame-head-t3: var(--color-edge);
+  --frame-head-t4: var(--elevation-contact);
+  /* frame-bar */
+  --frame-bar-t1: var(--color-canvas);
+  --frame-bar-t2: var(--color-highlight);
+  --frame-bar-t3: var(--color-edge);
+  --frame-bar-t4: var(--elevation-contact);
+  /* frame-body */
+  --frame-body-t1: var(--color-canvas);
+  --frame-body-t2: var(--color-highlight);
+  --frame-body-t3: var(--color-canvas);
+  --frame-body-t4: var(--elevation-contact);
+  /* panel */
+  --panel-t1: var(--color-surface);
+  --panel-t2: var(--color-highlight-strong);
+  --panel-t3: var(--color-edge);
+  --panel-t4: var(--elevation-floating);
+  /* dialog */
+  --dialog-t1: var(--color-surface);
+  --dialog-t2: var(--color-highlight-strong);
+  --dialog-t3: var(--color-edge);
+  --dialog-t4: var(--elevation-modal);
+  /* toast */
+  --toast-t1: var(--color-surface);
+  --toast-t2: var(--color-highlight);
+  --toast-t3: var(--color-edge);
+  --toast-t4: var(--elevation-floating);
+  /* skeleton */
+  --skeleton-t1: var(--p-neutral-200);
+  --skeleton-t2: var(--color-highlight);
+  --skeleton-t3: var(--color-edge);
+  --skeleton-t4: var(--elevation-contact);
+  /* empty */
+  --empty-t1: var(--color-surface);
+  --empty-t2: var(--color-highlight);
+  --empty-t3: var(--color-edge);
+  --empty-t4: var(--elevation-raised);
+  /* error */
+  --error-t1: var(--color-danger-tint);
+  --error-t2: var(--color-highlight);
+  --error-t3: var(--p-danger-400);
+  --error-t4: var(--elevation-raised);
+
+  /* Component-state overrides. */
+  --button-min-inline-size: 96px;
+  --selection-rule-width: 3px;
+  --button-primary-text: var(--color-on-accent);
+  --button-primary-hover-t1: var(--color-accent-hover);
+  --button-primary-pressed-t1: var(--color-accent-pressed);
+  --button-secondary-text: var(--color-text);
+  --button-ghost-text: var(--color-subtle);
+  --button-danger-text: var(--p-white);
+  --button-danger-hover-t1: var(--color-danger-hover);
+  --button-result-t1: var(--color-success-tint);
+  --button-result-text: var(--color-success);
+  --button-result-t3: var(--color-success);
+  --control-hover-t4: var(--elevation-raised);
+  --control-focus-t3: var(--color-focus);
+  --control-disabled-t1: var(--color-disabled-fill);
+  --control-disabled-t3: var(--color-disabled-edge);
+  --control-disabled-t4: var(--elevation-contact);
+  --field-error-t1: var(--color-danger-tint);
+  --field-error-t3: var(--color-danger);
+  --field-success-t3: var(--color-success);
+  --checkbox-checked-t1: var(--color-accent);
+  --checkbox-checked-t2: var(--color-highlight-accent);
+  --checkbox-checked-t3: var(--p-accent-900);
+  --checkbox-checked-text: var(--p-white);
+  --badge-high-t1: var(--color-danger-tint);
+  --badge-high-text: var(--color-danger);
+  --badge-high-t3: var(--p-danger-400);
+  --badge-medium-t1: var(--color-warning-tint);
+  --badge-medium-text: var(--color-warning);
+  --badge-medium-t3: var(--p-warning-400);
+  --badge-low-t1: var(--p-neutral-100);
+  --badge-low-text: var(--color-subtle);
+  --badge-low-t3: var(--p-neutral-400);
+  --task-row-selected-t1: var(--color-selection);
+  --task-row-selected-t3: var(--color-selection-edge);
+  --task-row-selected-rule: var(--color-accent);
+  --task-row-done-t1: var(--p-neutral-100);
+  --task-row-done-text: var(--color-muted);
+  --task-row-done-t4: var(--elevation-contact);
+  --task-row-drag-t1: var(--color-drag-fill);
+  --task-row-drag-t3: var(--color-selection-edge);
+  --task-row-drag-t4: var(--elevation-floating);
+  --task-row-drop-t1: var(--p-accent-100);
+  --task-row-drop-t3: var(--color-accent);
+  --app-counter-t1: var(--p-gold-fill);
+  --app-counter-t2: var(--p-gold-highlight);
+  --app-counter-t3: var(--p-gold-edge);
+  --app-counter-t4: var(--elevation-raised);
+  --app-counter-text: var(--p-gold-ink);
+  --detail-head-t1: var(--p-accent-50);
+  --skeleton-sheen: rgb(255 255 255 / 0.5);
+}
+
+/* Reduced motion: movement goes, colour and opacity stay. Every
+   amplitude becomes identity (no travel, scale, rotation or collapse), and every timing becomes a
+   short local crossfade: 150ms in, 120ms out. Spinners and shimmer are removed by the recipes. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --lift-hover: 0px;
+    --press-y: 0px;
+    --press-scale: 1;
+    --icon-press-scale: 1;
+    --check-press-scale: 1;
+    --move-enter-y: 0px;
+    --move-complete-y: 0px;
+    --move-exit-x: 0px;
+    --move-dialog-y: 0px;
+    --move-dialog-scale: 1;
+    --move-sheet-y: 0px;
+    --move-sheet-y-phone: 0px;
+    --move-menu-y: 0px;
+    --move-menu-exit-y: 0px;
+    --move-toast-y: 0px;
+    --move-toast-exit-y: 0px;
+    --move-message-y: 0px;
+    --move-drag-scale: 1;
+    --motion-hover-duration: var(--p-duration-reduced);
+    --motion-press-duration: var(--p-duration-reduced);
+    --motion-release-duration: var(--p-duration-reduced);
+    --motion-focus-duration: var(--p-duration-reduced);
+    --motion-change-duration: var(--p-duration-reduced);
+    --motion-check-duration: var(--p-duration-reduced);
+    --motion-turn-duration: var(--p-duration-none);
+    --motion-collapse-duration: var(--p-duration-none);
+    --motion-collapse-delay: var(--p-duration-reduced-exit);
+    --motion-row-enter-duration: var(--p-duration-reduced);
+    --motion-content-enter-duration: var(--p-duration-reduced);
+    --motion-row-exit-duration: var(--p-duration-reduced-exit);
+    --motion-wash-duration: var(--p-duration-reduced);
+    --motion-drag-lift-duration: var(--p-duration-reduced);
+    --motion-drag-settle-duration: var(--p-duration-reduced);
+    --motion-swipe-settle-duration: var(--p-duration-none);
+    --motion-dialog-enter-duration: var(--p-duration-reduced);
+    --motion-dialog-exit-duration: var(--p-duration-reduced-exit);
+    --motion-menu-enter-duration: var(--p-duration-reduced);
+    --motion-menu-exit-duration: var(--p-duration-reduced-exit);
+    --motion-backdrop-duration: var(--p-duration-reduced);
+    --motion-toast-enter-duration: var(--p-duration-reduced);
+    --motion-toast-exit-duration: var(--p-duration-reduced-exit);
+    --motion-action-duration: var(--p-duration-reduced);
+    --motion-error-duration: var(--p-duration-reduced);
+  }
+}

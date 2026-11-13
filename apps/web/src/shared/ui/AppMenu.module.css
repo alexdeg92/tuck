@@ -1,0 +1,7 @@
+/* The phone note bar's App menu: a 44 px icon button (its list is MenuButton's). */
+
+/* Outranks the phone tier's compact .plainIcon sizing: a full 44 px target. */
+.appMenu .trigger {
+  min-block-size: 44px;
+  min-inline-size: 44px;
+}

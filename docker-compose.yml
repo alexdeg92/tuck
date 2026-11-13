@@ -1,0 +1,35 @@
+# Local stack for `make local`: http://localhost:8080 (nginx serves the app and proxies /api).
+name: tuck
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    init: true
+    environment:
+      JWT_SECRET: ${JWT_SECRET:?run make local, which generates .env.secret}
+      SEED_DEMO: 'true'
+      # Plain http on localhost: a Secure cookie would never be sent back.
+      COOKIE_SECURE: 'false'
+      # One proxy hop (nginx), so the rate limit sees the real client address.
+      TRUST_PROXY: '1'
+    volumes:
+      - tuck-data:/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      args:
+        DEMO_SIGN_IN: 'true'
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:${LOCAL_PORT:-8080}:8080'
+    restart: unless-stopped
+
+volumes:
+  tuck-data:

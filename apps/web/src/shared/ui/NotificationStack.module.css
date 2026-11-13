@@ -1,0 +1,25 @@
+.stack {
+  position: fixed;
+  inset-block-end: calc(var(--layout-footer) + var(--layout-safe-bottom) + var(--space-4));
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  inline-size: min(
+    24rem,
+    calc(100% - 2 * max(var(--space-4), var(--layout-safe-left), var(--layout-safe-right)))
+  );
+  z-index: var(--z-toast);
+  display: grid;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+@media (horizontal-viewport-segments: 2) {
+  .stack {
+    inset-inline-start: calc(env(viewport-segment-left 1 0) + env(viewport-segment-width 1 0) / 2);
+    inline-size: min(24rem, calc(env(viewport-segment-width 1 0) - 2 * var(--space-4)));
+  }
+}
+
+.item {
+  min-width: 0;
+  pointer-events: auto;
+}

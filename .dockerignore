@@ -1,0 +1,15 @@
+# Keep host-built artifacts out of the images: node_modules may hold macOS native binaries.
+**/node_modules
+**/dist
+**/coverage
+e2e/playwright-report
+e2e/test-results
+.git
+.github
+.env
+.env.*
+!.env.example
+**/*.db
+**/*.db-*
+docs
+*.md

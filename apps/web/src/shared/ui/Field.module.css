@@ -1,0 +1,207 @@
+/* Auth form fields: 48px, 4-tone input, animated hover/focus/invalid/disabled. */
+.field {
+  display: grid;
+  gap: 7px;
+  min-inline-size: 0;
+}
+
+.label {
+  color: var(--color-text);
+  font: 500 13px / 1.4 var(--font-text);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Fill neutral-50, highlight a white top inset, edge --color-control-edge (neutral-500, ≥3:1 non-text contrast), contact cast. */
+.control {
+  inline-size: 100%;
+  min-block-size: 48px;
+  padding: 11px 12px;
+  border: 1px solid var(--color-control-edge);
+  border-radius: 6px;
+  background: var(--p-neutral-50);
+  color: var(--p-neutral-900);
+  caret-color: var(--color-accent);
+  font: 400 16px / 24px var(--font-text);
+  outline: 2px solid transparent;
+  outline-offset: 3px;
+  box-shadow:
+    inset 0 1px 0 var(--color-highlight-strong),
+    var(--elevation-contact);
+  transition:
+    background-color var(--motion-hover-duration) var(--ease-state),
+    border-color var(--motion-focus-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state),
+    opacity var(--motion-release-duration) var(--ease-release);
+}
+
+.control::placeholder {
+  color: var(--p-neutral-600);
+}
+
+@media (hover: hover) {
+  .control:hover:not(:disabled) {
+    background: color-mix(in oklch, var(--color-accent) 8%, var(--p-neutral-50));
+  }
+}
+
+.control:focus-visible {
+  border-color: var(--color-accent);
+  outline-color: var(--color-focus);
+}
+
+.control[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+.control[aria-invalid='true']:focus-visible {
+  border-color: var(--color-danger);
+}
+
+.control:disabled {
+  opacity: 0.38;
+  background: color-mix(in oklch, var(--color-state-layer) 12%, var(--p-neutral-50));
+}
+
+/* Autofill keeps the field tone instead of the browser's blue. */
+.control:-webkit-autofill,
+.control:autofill {
+  -webkit-text-fill-color: var(--p-neutral-900);
+  caret-color: var(--color-accent);
+  box-shadow:
+    inset 0 0 0 1000px var(--p-neutral-50),
+    var(--elevation-contact);
+  font: inherit;
+}
+
+.textarea {
+  min-block-size: 120px;
+  padding: var(--space-2) 12px;
+  resize: vertical;
+}
+
+/* The message under a field: icon + text, entering without moving the layout under the pointer. */
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  margin: 0;
+  color: var(--p-danger-700);
+  font: 400 12px / 18px var(--font-text);
+  animation: messageIn var(--motion-check-duration) var(--ease-enter) both;
+}
+
+.errorIcon {
+  flex-shrink: 0;
+  inline-size: 14px;
+  block-size: 14px;
+  margin-block-start: 1px;
+}
+
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--move-message-y)));
+  }
+}
+
+.withToggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+}
+
+.withToggle .control {
+  padding-inline-end: 48px;
+}
+
+/* No native reveal icon: the custom eye is the only one. */
+.withToggle .control::-ms-reveal {
+  display: none;
+}
+
+/* Show / Hide password: an unboxed eye with a state layer, 44×44 target. */
+.toggle {
+  position: absolute;
+  inset-inline-end: 2px;
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition:
+    transform var(--motion-release-duration) var(--ease-release),
+    outline-color var(--motion-focus-duration) var(--ease-state),
+    opacity var(--motion-hover-duration) var(--ease-state);
+}
+
+.toggle::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 4px;
+  background: var(--color-state-layer);
+  opacity: 0;
+  transition: opacity var(--motion-release-duration) var(--ease-release);
+}
+
+@media (hover: hover) {
+  .toggle:hover::before {
+    opacity: var(--state-hover);
+    transition-duration: var(--motion-hover-duration);
+  }
+}
+
+.toggle:active {
+  transform: scale(var(--icon-press-scale));
+  transition-duration: var(--motion-press-duration);
+}
+
+.toggle:active::before {
+  opacity: var(--state-pressed);
+  transition-duration: var(--motion-press-duration);
+}
+
+.toggle:focus-visible {
+  outline-color: var(--color-focus);
+}
+
+.toggle:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.toggleIcon {
+  grid-area: 1 / 1;
+  inline-size: 18px;
+  block-size: 18px;
+  transition: opacity var(--motion-check-duration) var(--ease-state);
+}
+
+/* The eye and the struck eye cross-fade. */
+.toggle[data-state='hidden'] [data-icon='hide'],
+.toggle[data-state='shown'] [data-icon='show'] {
+  opacity: 0;
+}
+
+.toggle[data-state='shown'] {
+  color: var(--color-accent);
+}

@@ -1,0 +1,24 @@
+{
+  "items": [
+    {
+      "id": "6a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "taskId": "3f2b8c1e-7a4d-4e9b-9c2a-1d5e6f7a8b9c",
+      "text": "Oat milk",
+      "notes": "The barista one, not the light one.",
+      "done": false,
+      "position": "a0",
+      "createdAt": "2026-11-11T09:31:00.000Z",
+      "updatedAt": "2026-11-11T09:31:00.000Z"
+    },
+    {
+      "id": "7b2c3d4e-5f6a-4b7c-9d8e-0f1a2b3c4d5e",
+      "taskId": "3f2b8c1e-7a4d-4e9b-9c2a-1d5e6f7a8b9c",
+      "text": "Eggs",
+      "notes": "",
+      "done": true,
+      "position": "a1",
+      "createdAt": "2026-11-11T09:32:00.000Z",
+      "updatedAt": "2026-11-11T10:00:00.000Z"
+    }
+  ]
+}

@@ -1,0 +1,267 @@
+/*
+ * Custom Select: a 4-tone trigger and a listbox popover. React Aria exposes
+ * the states as data attributes: [data-hovered] [data-pressed] [data-focus-visible]
+ * [data-disabled] [data-selected] [data-open] [data-entering] [data-exiting].
+ */
+.select {
+  display: grid;
+  gap: 6px;
+  min-inline-size: 0;
+}
+
+.label {
+  color: var(--color-text);
+  font: 500 13px / 18px var(--font-text);
+}
+
+/* Fill neutral-50, white top inset, control edge (≥3:1), contact cast. */
+.trigger {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  inline-size: 100%;
+  min-block-size: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-control-edge);
+  border-radius: 6px;
+  outline: 2px solid transparent;
+  outline-offset: 3px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow:
+    inset 0 1px 0 var(--color-highlight-strong),
+    var(--elevation-contact);
+  font: 400 14px / 20px var(--font-text);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    transform var(--motion-release-duration) var(--ease-release),
+    border-color var(--motion-focus-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state),
+    opacity var(--motion-hover-duration) var(--ease-state);
+}
+
+.trigger::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--color-accent);
+  opacity: 0;
+  transition: opacity var(--motion-release-duration) var(--ease-release);
+}
+
+.trigger[data-hovered]::before {
+  opacity: var(--state-hover);
+  transition-duration: var(--motion-hover-duration);
+}
+
+.trigger[data-pressed] {
+  transform: translateY(var(--press-y));
+  transition-duration: var(--motion-press-duration);
+}
+
+.trigger[data-pressed]::before {
+  opacity: var(--state-pressed);
+  transition-duration: var(--motion-press-duration);
+}
+
+.trigger[data-focus-visible] {
+  border-color: var(--color-accent);
+  outline-color: var(--color-focus);
+}
+
+.trigger[data-disabled] {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.trigger[data-tone='quiet'] .value {
+  color: var(--color-muted);
+}
+
+.trigger[data-tone='alert'] .value svg {
+  color: var(--color-danger);
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-inline-size: 0;
+}
+
+.value svg,
+.optionLabel svg {
+  inline-size: 14px;
+  block-size: 14px;
+}
+
+.chevron {
+  flex-shrink: 0;
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--color-muted);
+  transition: transform var(--motion-turn-duration) var(--ease-state);
+}
+
+.select[data-open] .chevron {
+  transform: rotate(180deg);
+}
+
+/* The menu: trigger width (176–320px), padding 4, radius 8, hairline edge, floating cast. */
+.popover {
+  inline-size: var(--trigger-width);
+  min-inline-size: 176px;
+  max-inline-size: min(320px, calc(100vw - 16px));
+  padding: 4px;
+  overflow: auto;
+  border: 1px solid var(--color-edge);
+  border-radius: 8px;
+  background: var(--color-surface);
+  box-shadow:
+    inset 0 1px 0 var(--color-highlight-strong),
+    var(--elevation-floating);
+  transition:
+    opacity var(--motion-menu-enter-duration) var(--ease-enter),
+    transform var(--motion-menu-enter-duration) var(--ease-enter);
+}
+
+.popover[data-entering] {
+  opacity: 0;
+  transform: translateY(var(--move-menu-y));
+}
+
+.popover[data-exiting] {
+  opacity: 0;
+  transform: translateY(var(--move-menu-exit-y));
+  transition-duration: var(--motion-menu-exit-duration);
+  transition-timing-function: var(--ease-exit);
+}
+
+.listbox {
+  display: grid;
+  outline: none;
+}
+
+.option {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-block-size: 40px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  color: var(--color-text);
+  font: 400 14px / 20px var(--font-text);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-check-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state),
+    opacity var(--motion-hover-duration) var(--ease-state);
+}
+
+.option::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--color-accent);
+  opacity: 0;
+  transition: opacity var(--motion-release-duration) var(--ease-release);
+}
+
+.option[data-hovered]::before {
+  opacity: var(--state-hover);
+  transition-duration: var(--motion-hover-duration);
+}
+
+/* Press shades the row, without moving it. */
+.option[data-pressed]::before {
+  opacity: var(--state-pressed);
+  transition-duration: var(--motion-press-duration);
+}
+
+.option[data-focus-visible] {
+  outline-color: var(--color-focus);
+}
+
+.option[data-focus-visible]::before {
+  opacity: var(--state-focus);
+}
+
+.option[data-selected] {
+  background-color: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface));
+}
+
+.option[data-disabled] {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.option[data-tone='quiet'] {
+  color: var(--color-muted);
+}
+
+.option[data-tone='alert'] .optionLabel svg {
+  color: var(--color-danger);
+}
+
+.optionLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Every option reserves the check slot; the selected one shows it. */
+.optionCheck {
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--color-accent);
+  opacity: 0;
+  transition: opacity var(--motion-check-duration) var(--ease-state);
+}
+
+.option[data-selected] .optionCheck {
+  opacity: 1;
+}
+
+@media (pointer: coarse), (width < 600px) {
+  .trigger,
+  .option {
+    min-block-size: 44px;
+    font-size: 16px;
+  }
+}
+
+/* Compact: the draft row's small priority chip. */
+.compact .trigger {
+  inline-size: auto;
+  min-block-size: 28px;
+  gap: 6px;
+  padding: 2px 6px 2px 8px;
+  font-size: 12px;
+  line-height: 18px;
+  box-shadow: none;
+}
+
+.compact .chevron {
+  inline-size: 14px;
+  block-size: 14px;
+}
+
+@media (pointer: coarse), (width < 600px) {
+  .compact .trigger {
+    min-block-size: 44px;
+    font-size: 16px;
+  }
+}

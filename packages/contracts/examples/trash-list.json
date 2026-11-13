@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "id": "3f2b8c1e-7a4d-4e9b-9c2a-1d5e6f7a8b9c",
+      "title": "Draft the quarterly report",
+      "notes": "Pull the numbers from the finance dashboard first.",
+      "status": "todo",
+      "priority": "high",
+      "dueDate": "2026-11-20",
+      "position": "a0",
+      "createdAt": "2026-11-11T09:30:00.000Z",
+      "updatedAt": "2026-11-11T09:30:00.000Z",
+      "completedAt": null,
+      "checklist": { "done": 1, "total": 3 },
+      "deletedAt": "2026-11-12T10:00:00.000Z",
+      "purgeAt": "2026-12-12T10:00:00.000Z"
+    },
+    {
+      "id": "8a1d2c3b-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "title": "Book the venue",
+      "notes": "",
+      "status": "done",
+      "priority": "medium",
+      "dueDate": null,
+      "position": "Zz",
+      "createdAt": "2026-11-02T08:00:00.000Z",
+      "updatedAt": "2026-11-05T08:00:00.000Z",
+      "completedAt": "2026-11-05T08:00:00.000Z",
+      "checklist": { "done": 0, "total": 0 },
+      "deletedAt": "2026-11-10T16:45:00.000Z",
+      "purgeAt": "2026-12-10T16:45:00.000Z"
+    }
+  ]
+}

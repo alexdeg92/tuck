@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "id": "3f2b8c1e-7a4d-4e9b-9c2a-1d5e6f7a8b9c",
+      "title": "Draft the quarterly report",
+      "notes": "Pull the numbers from the finance dashboard first.",
+      "status": "todo",
+      "priority": "high",
+      "dueDate": "2026-11-20",
+      "position": "a0",
+      "createdAt": "2026-11-11T09:30:00.000Z",
+      "updatedAt": "2026-11-11T09:30:00.000Z",
+      "completedAt": null
+    },
+    {
+      "id": "8d4e2a6b-1c3f-4b7a-8e9d-0f1a2b3c4d5e",
+      "title": "Book the dentist appointment",
+      "notes": "",
+      "status": "done",
+      "priority": "low",
+      "dueDate": null,
+      "position": "a1",
+      "createdAt": "2026-11-10T14:05:00.000Z",
+      "updatedAt": "2026-11-11T08:00:00.000Z",
+      "completedAt": "2026-11-11T08:00:00.000Z"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+# Optional source-build override: docker compose -f compose.cloud.yml -f compose.cloud.source.yml up --build
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      args:
+        DEMO_SIGN_IN: ${SEED_DEMO:-false}

@@ -1,0 +1,221 @@
+/* dnd-kit's pointer sensor needs the handle, and only the handle, to opt out of touch panning. */
+.grip {
+  touch-action: none;
+}
+
+/* The title is a real link (it opens the notes page) that reads as the row's text. */
+.link {
+  text-decoration: none;
+}
+
+/*
+ * Phone-tier gesture row: suppress accidental selection/callout on the row while
+ * keeping notes/search/draft selection elsewhere. Editable controls inside re-enable selection.
+ */
+.touchRow,
+.touchRow * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.touchRow {
+  touch-action: pan-y pinch-zoom;
+}
+
+.touchRow input:not([type='checkbox']),
+.touchRow textarea,
+.touchRow select,
+.touchRow [contenteditable='true'] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+/* Options sheet lives under the row in the DOM; keep its fields selectable. */
+.touchRow :global(.settingsPopover),
+.touchRow :global(.settingsPopover) * {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+.swipeClip {
+  position: relative;
+  overflow: hidden;
+}
+
+.swipeUnderlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding-inline: 12px;
+  background: var(--color-success);
+  color: var(--color-on-accent, var(--p-white));
+  font: 500 12px / 18px var(--font-text);
+  pointer-events: none;
+}
+
+/* The underlay exists for a horizontal swipe and its settle only. At rest, and so whenever a
+   lifecycle phase fades the surface in, it is hidden: it must never show through the row. */
+.swipeUnderlay:not([data-gesture='swiping'], [data-gesture='settling']) {
+  visibility: hidden;
+}
+
+.swipeUnderlay[data-action='reopen'] {
+  background: var(--color-accent);
+}
+
+/* A swipe to the right moves the task to the trash: the same underlay, in the danger colour. */
+.swipeUnderlay[data-action='delete'] {
+  background: var(--color-danger);
+}
+
+/* The label sits at the uncovered edge, so it reads from the arm threshold onward. */
+.swipeUnderlay[data-side='left'] {
+  justify-content: flex-start;
+}
+
+.swipeUnderlay[data-side='right'] {
+  justify-content: flex-end;
+}
+
+.swipeLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.swipeLabel > svg {
+  inline-size: 14px;
+  block-size: 14px;
+}
+
+.swipeSurface {
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+}
+
+.rowOptions {
+  grid-column: 4;
+  grid-row: 1 / span 2;
+  align-self: center;
+  justify-self: end;
+}
+
+.rowMore {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  min-inline-size: 44px;
+  min-block-size: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: none;
+  color: var(--color-muted);
+  cursor: pointer;
+  box-shadow: none;
+  outline: 2px solid transparent;
+  outline-offset: 1px;
+  transition:
+    background-color var(--motion-hover-duration) var(--ease-state),
+    color var(--motion-hover-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state),
+    transform var(--motion-release-duration) var(--ease-release);
+}
+
+.rowMore:focus-visible {
+  outline-color: var(--color-focus);
+}
+
+.rowMore:active {
+  background: var(--color-selection);
+  transform: scale(var(--icon-press-scale));
+  transition-duration: var(--motion-press-duration);
+}
+
+/* The options sheet is open for this row. */
+.rowMore[aria-expanded='true'] {
+  background: var(--color-selection);
+  color: var(--color-accent);
+}
+
+@media (hover: hover) {
+  .rowMore:hover {
+    background: var(--color-canvas);
+    color: var(--color-text);
+  }
+}
+
+/* The hold is recognised: the row takes the held material until the finger lifts. */
+.swipeSurface[data-held='true'] {
+  --t1: color-mix(in srgb, var(--color-accent) 9%, var(--color-surface));
+}
+
+/*
+ * The whole row opens the task (stretched link): the title link's ::after covers the row, under
+ * the checkbox, grip and options, which keep their own behaviour. One tab stop, real link
+ * semantics (middle-click, Cmd-click). Its focus ring outlines the row.
+ */
+.link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--layout-row-radius);
+  outline: var(--focus-width) solid transparent;
+  outline-offset: calc(-1 * var(--focus-width));
+  cursor: pointer;
+  transition: outline-color var(--motion-focus-duration) var(--ease-state);
+}
+
+.row :global(.taskLink):focus-visible {
+  outline-color: transparent;
+}
+
+.row .link:focus-visible::after {
+  outline-color: var(--color-focus);
+}
+
+.grip,
+.row :global(.rowCheck),
+.rowOptions {
+  position: relative;
+  z-index: 1;
+}
+
+/* A fine pointer can grab the row anywhere: grab while pressed, grabbing while it moves. */
+@media (pointer: fine) {
+  .row:not([data-done='true']) .link:active::after {
+    cursor: grab;
+  }
+}
+
+.row[data-dragging='true'] .link::after {
+  cursor: grabbing;
+}
+
+/*
+ * A search hit: the match summary sits under the
+ * title inside the same link, and priority/date wrap on their own line below. The grip and
+ * checkbox stay level with the title's first line. Keyed on the row's data-search attribute,
+ * which TaskRow sets, so the layout can't come apart from it.
+ */
+:global(.taskRow)[data-search='true'] {
+  align-items: start;
+  --p-row-meta-col: 3;
+  --p-row-meta-row: 2;
+  --p-row-meta-display: flex;
+  --p-row-meta-align: start;
+  --p-row-meta-pad: 2px;
+}
+:global(.taskRow)[data-search='true'] .link {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: start;
+  gap: 2px;
+}

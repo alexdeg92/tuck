@@ -1,0 +1,115 @@
+/* A menu button's floating list of actions (MenuButton): App menu, Account menu. The list hangs
+   under its trigger, its right edge on the trigger's, and never runs past the viewport. */
+
+.host {
+  position: relative;
+  display: inline-flex;
+}
+
+.menu {
+  position: absolute;
+  inset-block-start: calc(100% + 6px);
+  inset-inline-end: 0;
+  z-index: 20;
+  display: grid;
+  min-inline-size: 200px;
+  max-inline-size: min(320px, calc(100vw - 16px));
+  padding: 4px;
+  border: 1px solid var(--color-edge);
+  border-radius: 8px;
+  background: var(--color-surface);
+  box-shadow:
+    inset 0 1px 0 var(--color-highlight-strong),
+    var(--elevation-floating);
+  animation: menuIn var(--motion-menu-enter-duration) var(--ease-enter) both;
+}
+
+@keyframes menuIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-menu-y));
+  }
+}
+
+/* Who is signed in: context, not an action. */
+.note {
+  margin: 0;
+  padding: 8px 10px;
+  overflow: hidden;
+  color: var(--color-muted);
+  font: 400 12px / 20px var(--font-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.separator {
+  block-size: 1px;
+  margin-block: 4px;
+  margin-inline: 6px;
+  background: var(--color-edge);
+}
+
+.item {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-block-size: 44px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 4px;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  background: none;
+  color: var(--color-text);
+  font: 500 14px / 20px var(--font-text);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    outline-color var(--motion-focus-duration) var(--ease-state),
+    opacity var(--motion-hover-duration) var(--ease-state);
+}
+
+.item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--color-accent);
+  opacity: 0;
+  transition: opacity var(--motion-release-duration) var(--ease-release);
+}
+
+@media (hover: hover) {
+  .item:hover::before {
+    opacity: var(--state-hover);
+    transition-duration: var(--motion-hover-duration);
+  }
+}
+
+/* Press shades the item, without moving it. */
+.item:active::before {
+  opacity: var(--state-pressed);
+  transition-duration: var(--motion-press-duration);
+}
+
+.item:focus-visible {
+  outline-color: var(--color-focus);
+}
+
+.item:focus-visible::before {
+  opacity: var(--state-focus);
+}
+
+.item[aria-disabled='true'] {
+  opacity: 0.38;
+  cursor: default;
+}
+
+/* A rarer action under the main one: quieter text, same target size. */
+.secondary {
+  color: var(--color-muted);
+  font-weight: 400;
+}

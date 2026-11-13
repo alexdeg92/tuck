@@ -1,0 +1,61 @@
+.surface {
+  --pwa-enter: 240ms;
+  --pwa-exit: 180ms;
+  padding: var(--space-3);
+  border: 1px solid var(--color-edge);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--elevation-contact);
+  animation: enter var(--pwa-enter) cubic-bezier(0.2, 0, 0.2, 1) both;
+}
+.surface[data-exiting='true'] {
+  pointer-events: none;
+  animation: exit var(--pwa-exit) cubic-bezier(0.4, 0, 1, 1) both;
+}
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-toast-y));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes exit {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(var(--move-toast-y));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .surface {
+    --pwa-enter: 150ms;
+    --pwa-exit: 120ms;
+    animation-name: fadeIn;
+  }
+  .surface[data-exiting='true'] {
+    animation-name: fadeOut;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

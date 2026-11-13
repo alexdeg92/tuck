@@ -1,0 +1,325 @@
+/* CSS Modules source. Width/aspect queries choose the window tier.
+   Only pane internals use container queries. Numbers in media queries are fixed
+   literals because CSS custom properties cannot be substituted there. */
+.app {
+  display: grid;
+  grid-template-rows:
+    calc(var(--layout-header-compact) + var(--layout-safe-top)) auto minmax(0, 1fr)
+    calc(var(--layout-footer) + var(--layout-safe-bottom));
+  block-size: 100vh;
+  block-size: 100dvh;
+  min-block-size: 0;
+  overflow: hidden;
+  background: var(--color-canvas);
+}
+.appBarSlot {
+  min-block-size: 0;
+  margin: 0;
+  padding-block-start: var(--layout-safe-top);
+  padding-inline-start: max(var(--space-4), var(--layout-safe-left));
+  padding-inline-end: max(var(--space-4), var(--layout-safe-right));
+  border-radius: 0;
+}
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  min-inline-size: 0;
+  min-block-size: 0;
+  block-size: 100%;
+  inline-size: 100%;
+  margin: 0 auto;
+  padding: var(--space-4) var(--layout-gutter-phone) var(--space-3);
+  gap: 0;
+}
+.master,
+.detail {
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+.master {
+  container: task-pane / inline-size;
+}
+.detail {
+  container: detail-pane / inline-size;
+}
+.workspace > .detail {
+  display: none;
+}
+.workspace[data-detail-open='true'] > .master {
+  display: none;
+}
+.workspace[data-detail-open='true'] > .detail {
+  display: grid;
+}
+.frame {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  min-inline-size: 0;
+  min-block-size: 0;
+  block-size: 100%;
+}
+.head {
+  grid-row: 1;
+  min-block-size: 0;
+}
+.bar {
+  grid-row: 2;
+  min-block-size: 0;
+}
+.body {
+  grid-row: 3;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-edge) var(--color-canvas);
+  scrollbar-gutter: stable;
+}
+.masterBar {
+  display: grid;
+  gap: var(--space-3);
+  padding: 0 var(--space-1) var(--space-2);
+}
+.masterBody {
+  padding: var(--space-1) var(--space-1) var(--space-4);
+}
+.masterFoot {
+  padding-block-start: var(--space-3);
+}
+.listCaption {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+.detailBody {
+  padding: var(--space-5);
+  background: var(--color-surface);
+}
+.detailBack {
+  display: inline-flex;
+}
+.productFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-inline-size: 0;
+  min-block-size: 0;
+  padding-inline: var(--space-4);
+  padding-block-end: var(--layout-safe-bottom);
+  border-block-start: var(--border-width) solid var(--color-edge);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+.footerLeft,
+.footerRight {
+  min-inline-size: 0;
+}
+.footerRight {
+  text-align: end;
+}
+.footerTagline {
+  display: none;
+}
+
+/* T4 / Narrow cover. It remains one frame, not a scaled desktop. */
+@media (width < 360px) {
+  .workspace {
+    padding-inline: var(--layout-gutter-cover);
+  }
+  .appBarSlot,
+  .productFooter {
+    padding-inline: var(--layout-gutter-cover);
+  }
+}
+/* T2 / Tall medium tablet. Exactly 4/5 belongs to T3. */
+@media (600px <= width < 1200px) and (aspect-ratio < 4/5) {
+  .app {
+    grid-template-rows:
+      calc(var(--layout-header-desktop) + var(--layout-safe-top)) auto minmax(0, 1fr)
+      calc(var(--layout-footer) + var(--layout-safe-bottom));
+  }
+  .appBarSlot {
+    margin: var(--space-4) var(--space-5) 0;
+    border-radius: var(--layout-header-radius);
+  }
+  .workspace {
+    grid-template-columns: minmax(0, var(--layout-readable-max));
+    justify-content: center;
+    padding: var(--space-5) var(--space-5);
+  }
+}
+/* T3 / Book, square and passport. Exactly 3/2 stays in T3. */
+@media (600px <= width < 1200px) and (4/5 <= aspect-ratio <= 3/2) {
+  .app {
+    grid-template-rows:
+      calc(var(--layout-header-desktop) + var(--layout-safe-top)) auto minmax(0, 1fr)
+      calc(var(--layout-footer) + var(--layout-safe-bottom));
+  }
+  .appBarSlot {
+    margin: var(--space-4) var(--space-5) 0;
+    border-radius: var(--layout-header-radius);
+  }
+  .workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--layout-crease-gutter);
+    padding: var(--layout-gutter-tablet);
+  }
+  .workspace > .detail,
+  .workspace[data-detail-open='true'] > .master {
+    display: grid;
+  }
+  .detailBack {
+    display: none;
+  }
+  .detailBody {
+    padding: var(--space-4);
+  }
+}
+/* T2 / Wide medium tablet: narrower master, flexible detail. */
+@media (600px <= width < 1200px) and (aspect-ratio > 3/2) {
+  .app {
+    grid-template-rows:
+      calc(var(--layout-header-desktop) + var(--layout-safe-top)) auto minmax(0, 1fr)
+      calc(var(--layout-footer) + var(--layout-safe-bottom));
+  }
+  .appBarSlot {
+    margin: var(--space-4) var(--space-5) 0;
+    border-radius: var(--layout-header-radius);
+  }
+  .workspace {
+    grid-template-columns: var(--layout-list-tablet) minmax(0, 1fr);
+    gap: var(--layout-gap-tablet);
+    padding: var(--layout-gutter-tablet);
+  }
+  .workspace > .detail,
+  .workspace[data-detail-open='true'] > .master {
+    display: grid;
+  }
+  .detailBack {
+    display: none;
+  }
+}
+/* T1 / Desktop and large tablet. Exactly 1200 belongs here. */
+@media (width >= 1200px) {
+  .app {
+    grid-template-rows:
+      calc(var(--layout-header-desktop) + var(--layout-safe-top)) auto minmax(0, 1fr)
+      calc(var(--layout-footer) + var(--layout-safe-bottom));
+  }
+  .appBarSlot {
+    margin: var(--space-4) var(--space-5) 0;
+    border-radius: var(--layout-header-radius);
+  }
+  .workspace {
+    max-inline-size: var(--layout-frame-max);
+    grid-template-columns: var(--layout-list-desktop) minmax(0, 1fr);
+    gap: var(--layout-gap-desktop);
+    padding: var(--space-5) var(--layout-gutter-desktop);
+  }
+  .workspace > .detail,
+  .workspace[data-detail-open='true'] > .master {
+    display: grid;
+  }
+  .detailBack {
+    display: none;
+  }
+  .productFooter {
+    padding-inline: var(--layout-gutter-desktop);
+  }
+  .footerTagline {
+    display: inline;
+  }
+}
+/* Pane internals: independent of device names and shell tier. */
+@container task-pane (width < 360px) {
+  .counterSlot,
+  .reorderHint {
+    display: none;
+  }
+}
+/* Two physical segments win over the width/aspect heuristics. */
+@media (horizontal-viewport-segments: 2) {
+  .workspace {
+    --segment-gutter: var(--layout-gutter-tablet);
+    max-inline-size: none;
+    grid-template-columns:
+      calc(env(viewport-segment-width 0 0) - 2 * var(--segment-gutter))
+      calc(
+        env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0) + 2 * var(--segment-gutter)
+      )
+      calc(env(viewport-segment-width 1 0) - 2 * var(--segment-gutter));
+    padding: var(--segment-gutter);
+    gap: 0;
+  }
+  .workspace > .master {
+    grid-column: 1;
+    display: grid;
+  }
+  .workspace > .detail {
+    grid-column: 3;
+    display: grid;
+  }
+  .workspace[data-detail-open='true'] > .master {
+    display: grid;
+  }
+  .detailBack {
+    display: none;
+  }
+  .appBarSlot,
+  .productFooter {
+    display: grid;
+    grid-template-columns:
+      calc(env(viewport-segment-width 0 0) - 2 * var(--layout-gutter-tablet))
+      calc(
+        env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0) + 2 *
+          var(--layout-gutter-tablet)
+      )
+      calc(env(viewport-segment-width 1 0) - 2 * var(--layout-gutter-tablet));
+    column-gap: 0;
+    padding-inline: var(--layout-gutter-tablet);
+    margin-inline: 0;
+    border-radius: 0;
+  }
+  .barLeft,
+  .footerLeft {
+    grid-column: 1;
+  }
+  .barRight,
+  .footerRight {
+    grid-column: 3;
+    justify-self: end;
+  }
+  .footerTagline {
+    display: none;
+  }
+}
+
+/* A phone showing a note: the app bar is the note's bar, one 56 px row, and the note sits right
+   under it, edge to edge, with no frame head or gap of its own. */
+.app[data-note-bar='true'] {
+  grid-template-rows:
+    calc(var(--layout-header-note) + var(--layout-safe-top)) auto minmax(0, 1fr)
+    calc(var(--layout-footer) + var(--layout-safe-bottom));
+}
+.noteBar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-inline-start: max(8px, var(--layout-safe-left));
+  padding-inline-end: max(8px, var(--layout-safe-right));
+}
+.app[data-note-bar='true'] .workspace {
+  padding: 0;
+  gap: 0;
+}
+.app[data-note-bar='true'] .detail {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}

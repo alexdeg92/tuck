@@ -1,0 +1,63 @@
+{
+  "query": "oat mlik",
+  "mode": "fuzzy",
+  "suggestion": {
+    "text": "oat milk",
+    "changed": [
+      {
+        "start": 4,
+        "end": 8,
+        "typed": "mlik"
+      }
+    ]
+  },
+  "hits": [
+    {
+      "task": {
+        "id": "3f2b8c1e-7a4d-4e9b-9c2a-1d5e6f7a8b9c",
+        "title": "Groceries",
+        "notes": "",
+        "status": "todo",
+        "priority": "medium",
+        "dueDate": null,
+        "position": "a0",
+        "createdAt": "2026-11-11T09:30:00.000Z",
+        "updatedAt": "2026-11-11T09:30:00.000Z",
+        "completedAt": null,
+        "checklist": {
+          "done": 0,
+          "total": 2
+        }
+      },
+      "score": 2,
+      "matchCount": {
+        "value": 2,
+        "exact": true
+      },
+      "sourceCounts": {
+        "notes": {
+          "value": 0,
+          "exact": true
+        },
+        "checklist": {
+          "value": 2,
+          "exact": true
+        }
+      },
+      "matches": [
+        {
+          "field": "item",
+          "itemId": "6a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+          "snippet": "Oat milk",
+          "sourceStart": 0,
+          "sourceEnd": 8,
+          "highlights": [
+            [0, 3],
+            [4, 8]
+          ]
+        }
+      ]
+    }
+  ],
+  "truncated": false
+}

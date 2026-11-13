@@ -1,0 +1,478 @@
+/*
+ * Sign-in / sign-up frame. The document never scrolls: the
+ * shell is the viewport with the footer as its last row, and each pane body scrolls on its own
+ * (every ancestor min-height: 0). Desktop first, as the reference; narrower tiers below.
+ */
+.shell {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) calc(var(--layout-footer) + var(--layout-safe-bottom));
+  block-size: 100vh;
+  block-size: 100dvh;
+  min-block-size: 0;
+  overflow: hidden;
+  background: var(--color-canvas);
+}
+
+.main {
+  display: grid;
+  min-block-size: 0;
+  padding: 32px max(32px, var(--layout-safe-right)) 8px max(32px, var(--layout-safe-left));
+}
+
+/* One inset composition: 56% product / 44% form, max 1280px, a shared border and floating cast. */
+.composition {
+  display: grid;
+  grid-template-columns: minmax(0, 56fr) minmax(0, 44fr);
+  inline-size: min(1280px, 100%);
+  min-block-size: 0;
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid var(--color-edge);
+  border-radius: 8px;
+  box-shadow:
+    inset 0 1px 0 var(--color-highlight-strong),
+    var(--elevation-floating);
+}
+
+.product {
+  display: grid;
+  grid-template-rows: 96px minmax(0, 1fr);
+  min-inline-size: 0;
+  min-block-size: 0;
+  background: var(--color-canvas);
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 44px;
+  color: var(--color-text);
+  font: 600 29px / 1 var(--font-text);
+  letter-spacing: -0.035em;
+}
+
+.mark {
+  inline-size: 34px;
+  block-size: 34px;
+}
+
+.productBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: safe center;
+  gap: 30px;
+  min-block-size: 0;
+  padding: 12px 44px 36px;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.productCopy {
+  display: grid;
+  gap: 18px;
+}
+
+.headline {
+  max-inline-size: 470px;
+  margin: 0;
+  color: var(--color-text);
+  font: 500 clamp(36px, 3.7vw, 52px) / 1.06 var(--font-display);
+  letter-spacing: -0.045em;
+}
+
+.value {
+  margin: 0;
+  color: var(--color-subtle);
+  font: 400 16px / 1.5 var(--font-text);
+}
+
+.points {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-subtle);
+  font: 400 13px / 1.5 var(--font-text);
+}
+
+.points li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.points svg {
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--color-accent);
+}
+
+/* Workspace preview: the ruled list beside a note; static and inert. */
+.preview {
+  min-inline-size: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-edge);
+  border-radius: 8px;
+  background: var(--color-surface);
+  box-shadow:
+    inset 0 1px 0 var(--color-highlight-strong),
+    var(--elevation-raised);
+  user-select: none;
+}
+
+.previewHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-block-end: 1px solid var(--color-edge);
+}
+
+.previewHead strong {
+  font: 600 14px / 1.4 var(--font-text);
+}
+
+.previewHead span,
+.previewMeta {
+  color: var(--color-muted);
+  font: 400 10px / 14px var(--font-mono);
+}
+
+.previewPanes {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+}
+
+.previewList {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.previewRow {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 8px;
+  min-block-size: 48px;
+  padding: 10px 12px;
+  border-block-end: 1px solid var(--color-edge);
+  font: 400 12px / 17px var(--font-text);
+}
+
+.previewRow:last-child {
+  border-block-end: 0;
+}
+
+.previewRow[data-current='true'] {
+  background: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface));
+  box-shadow: inset 2px 0 var(--color-accent);
+}
+
+.previewBox {
+  display: grid;
+  place-items: center;
+  inline-size: 14px;
+  block-size: 14px;
+  margin-block-start: 1px;
+  border: 1px solid var(--p-neutral-400);
+  border-radius: 3px;
+  background: var(--color-surface);
+  box-shadow: inset 0 1px var(--color-highlight-strong);
+}
+
+.previewBox svg {
+  inline-size: 11px;
+  block-size: 11px;
+  opacity: 0;
+}
+
+.previewTitle {
+  display: block;
+  overflow: hidden;
+  color: var(--color-text);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.previewMeta {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-block-start: 3px;
+  font-size: 9px;
+}
+
+.previewMeta[data-high='true'] {
+  color: var(--color-danger);
+}
+
+.previewMeta svg {
+  inline-size: 9px;
+  block-size: 9px;
+}
+
+.previewNote {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-inline-size: 0;
+  padding: 16px 14px;
+  border-inline-start: 1px solid var(--color-edge);
+  color: var(--color-subtle);
+  font: 400 11px / 19px var(--font-text);
+}
+
+.previewNote p {
+  margin: 0;
+}
+
+.previewNote .previewNoteTitle {
+  color: var(--color-text);
+  font: 600 15px / 20px var(--font-text);
+  letter-spacing: -0.02em;
+}
+
+.previewFoot {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 16px;
+  border-block-start: 1px solid var(--color-edge);
+  color: var(--color-muted);
+  font: 400 10px / 1.4 var(--font-text);
+}
+
+.previewFoot > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.previewFoot svg {
+  inline-size: 10px;
+  block-size: 10px;
+}
+
+/* The form panel: the raised surface, the form centred in its own scrolling body. */
+.formPane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-inline-size: 0;
+  min-block-size: 0;
+  padding: 48px 40px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-inline-start: 1px solid var(--color-edge);
+  background: var(--p-neutral-50);
+  box-shadow: inset 0 1px 0 var(--color-highlight-strong);
+}
+
+.formBody {
+  inline-size: 100%;
+  max-inline-size: 352px;
+  margin-block: auto;
+  animation: formEnter var(--motion-row-enter-duration) var(--ease-enter) both;
+}
+
+@keyframes formEnter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-message-y));
+  }
+}
+
+@media (width >= 1440px) {
+  .main {
+    padding: 48px 48px 12px;
+  }
+}
+
+/* Tablet and foldable: a 50/50 split, the preview list only. */
+@media (600px <= width < 1200px) {
+  .main {
+    padding: 20px 20px 4px;
+  }
+
+  .composition {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .product {
+    grid-template-rows: 80px minmax(0, 1fr);
+  }
+
+  .wordmark {
+    margin-inline: 24px;
+  }
+
+  .productBody {
+    gap: 24px;
+    padding: 10px 24px 28px;
+  }
+
+  .headline {
+    font-size: 32px;
+  }
+
+  .value {
+    font-size: 14px;
+  }
+
+  .previewPanes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .previewNote {
+    display: none;
+  }
+
+  .points {
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  .formPane {
+    padding: 32px 24px;
+  }
+}
+
+/* Tall tablet: the wordmark and value prop above the form, in one column. */
+@media (600px <= width < 1200px) and (aspect-ratio < 4/5) {
+  .composition {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 136px minmax(0, 1fr);
+    max-inline-size: 680px;
+  }
+
+  .wordmark {
+    justify-content: center;
+  }
+
+  .productBody {
+    display: block;
+    padding: 0 24px;
+    overflow: visible;
+    text-align: center;
+  }
+
+  .headline,
+  .preview,
+  .points {
+    display: none;
+  }
+
+  .value {
+    font-size: 16px;
+  }
+
+  .formPane {
+    padding: 40px;
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--color-edge);
+  }
+
+  .formBody {
+    max-inline-size: 400px;
+    margin-block: 0;
+  }
+}
+
+/* Phone / cover: the wordmark in a fixed 76px head, then the form on a full-width surface. */
+@media (width < 600px) {
+  .main {
+    padding: 0;
+  }
+
+  .composition {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: calc(76px + var(--layout-safe-top)) minmax(0, 1fr);
+    inline-size: 100%;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .product {
+    display: flex;
+    align-items: center;
+    padding-block-start: var(--layout-safe-top);
+    border-block-end: 1px solid var(--color-edge);
+    background: var(--color-surface);
+  }
+
+  .wordmark {
+    margin: 0 24px;
+    font-size: 28px;
+  }
+
+  .mark {
+    inline-size: 32px;
+    block-size: 32px;
+  }
+
+  .productBody {
+    display: none;
+  }
+
+  .formPane {
+    padding: 32px max(24px, var(--layout-safe-right)) 32px max(24px, var(--layout-safe-left));
+    border: 0;
+  }
+
+  .formBody {
+    max-inline-size: 400px;
+    margin-block: 0;
+  }
+}
+
+@media (width <= 360px) {
+  .formPane {
+    padding-inline: 20px;
+  }
+
+  .wordmark {
+    margin-inline: 20px;
+  }
+}
+
+/* Two physical segments: one pane per segment, the hinge left empty. */
+@media (horizontal-viewport-segments: 2) {
+  .main {
+    padding: 0;
+  }
+
+  .composition {
+    grid-template-columns:
+      env(viewport-segment-width 0 0)
+      minmax(0, 1fr)
+      env(viewport-segment-width 1 0);
+    max-inline-size: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .product {
+    grid-column: 1;
+  }
+
+  .formPane {
+    grid-column: 3;
+  }
+
+  .previewNote {
+    display: none;
+  }
+
+  .previewPanes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .headline {
+    font-size: 32px;
+  }
+}

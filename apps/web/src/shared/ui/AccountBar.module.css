@@ -1,0 +1,61 @@
+/* The Account menu: the app bar's last item. Its trigger is a ghost button holding the email's
+   initial, then (beside a phone) the email and a chevron. */
+.host {
+  min-inline-size: 0;
+}
+
+.trigger {
+  min-inline-size: 0;
+  padding-inline: var(--space-2);
+}
+
+.initial {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  inline-size: 24px;
+  block-size: 24px;
+  border: 1px solid var(--color-edge);
+  border-radius: 50%;
+  background: var(--color-canvas);
+  color: var(--color-subtle);
+  font: var(--weight-semibold) var(--text-xs) / 1 var(--font-text);
+}
+
+.initial::before {
+  content: attr(data-initial);
+}
+
+.email {
+  max-inline-size: 240px;
+}
+
+.chevron {
+  flex-shrink: 0;
+  inline-size: 14px;
+  block-size: 14px;
+  color: var(--color-muted);
+}
+
+/* The menu's email line: only where the trigger does not already show it. */
+.phoneOnly {
+  display: none;
+}
+
+/* A phone: the trigger is the initial alone, a full 44 px target. */
+@media (width < 600px) {
+  .trigger {
+    min-block-size: 44px;
+    min-inline-size: 44px;
+    justify-content: center;
+  }
+
+  .email,
+  .chevron {
+    display: none;
+  }
+
+  .phoneOnly {
+    display: block;
+  }
+}

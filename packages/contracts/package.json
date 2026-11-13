@@ -1,0 +1,16 @@
+{
+  "name": "@todo/contracts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./examples/*": "./examples/*"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "description": "Tuck contracts: the Zod schemas and the typed endpoint map shared by the API and the web client"
+}

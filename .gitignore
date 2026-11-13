@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+
+# build and test output
+dist/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# local data and environment
+.env
+.env.*
+!.env.example
+data/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+
+# editors and OS
+.DS_Store
+.idea/
+.vscode/
+*.log

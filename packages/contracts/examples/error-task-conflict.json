@@ -1,0 +1,18 @@
+{
+  "error": {
+    "code": "CONFLICT",
+    "message": "This task changed since you loaded it",
+    "current": {
+      "id": "3f2b8c1e-7a4d-4e9b-9c2a-1d5e6f7a8b9c",
+      "title": "Draft the quarterly report",
+      "notes": "Edited in another tab.",
+      "status": "todo",
+      "priority": "high",
+      "dueDate": "2026-11-20",
+      "position": "a0",
+      "createdAt": "2026-11-11T09:30:00.000Z",
+      "updatedAt": "2026-11-11T10:05:00.000Z",
+      "completedAt": null
+    }
+  }
+}

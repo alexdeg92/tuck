@@ -1,0 +1,17 @@
+{
+  "items": [
+    {
+      "id": "8d4e2a6b-1c3f-4b7a-8e9d-0f1a2b3c4d5e",
+      "title": "Plan the quarterly budget review",
+      "notes": "",
+      "status": "todo",
+      "priority": "high",
+      "dueDate": "2026-11-30",
+      "position": "a1",
+      "createdAt": "2026-11-10T14:05:00.000Z",
+      "updatedAt": "2026-11-10T14:05:00.000Z",
+      "completedAt": null,
+      "checklist": { "done": 0, "total": 0 }
+    }
+  ]
+}

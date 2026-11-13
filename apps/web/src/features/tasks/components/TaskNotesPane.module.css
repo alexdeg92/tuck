@@ -1,0 +1,229 @@
+/* Notes autosave: the head's save status, the conflict choice and the inline title error. */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+/* Each new state fades in (keyed in the markup); the text never moves the head's controls. */
+.statusText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: statusIn var(--motion-check-duration) var(--ease-enter) both;
+}
+
+.status[data-state='failed'],
+.status[data-state='conflict'] {
+  color: var(--p-danger-700);
+}
+
+@keyframes statusIn {
+  from {
+    opacity: 0;
+  }
+}
+
+.retry {
+  min-block-size: 32px;
+}
+
+/* The conflict choice: a bordered region above the canvas, like the sign-in form's alert. */
+.conflict {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-2);
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3);
+  border: 1px solid var(--p-danger-300);
+  border-radius: 6px;
+  background: var(--p-danger-50);
+  box-shadow: inset 0 1px 0 var(--color-highlight-strong);
+  color: var(--p-danger-700);
+  font: 400 13px / 20px var(--font-text);
+  animation: alertIn var(--motion-check-duration) var(--ease-enter) both;
+}
+
+.conflictIcon {
+  inline-size: 16px;
+  block-size: 16px;
+  margin-block-start: 2px;
+}
+
+.conflictText {
+  margin: 0;
+}
+
+.conflictActions {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.fieldError {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 var(--space-3);
+  color: var(--p-danger-700);
+  font: 400 13px / 20px var(--font-text);
+  animation: alertIn var(--motion-check-duration) var(--ease-enter) both;
+}
+
+.fieldError svg {
+  flex-shrink: 0;
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+@keyframes alertIn {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--move-message-y)));
+  }
+}
+
+.statusText {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusIcon {
+  flex-shrink: 0;
+  inline-size: 14px;
+  block-size: 14px;
+}
+
+.status[data-state='offline'],
+.status[data-state='invalid'] {
+  color: var(--p-danger-700);
+}
+
+/* The body's top status region: what an unsaved state means for the user's text. */
+.notice {
+  margin: 0 0 var(--space-3);
+  color: var(--color-muted);
+  font: 400 13px / 20px var(--font-text);
+  animation: alertIn var(--motion-check-duration) var(--ease-enter) both;
+}
+
+.conflictText p {
+  margin: 0;
+}
+
+.conflictText p + p {
+  margin-block-start: 4px;
+}
+
+/* A save's result: the check pops in and the status takes the accent while "Saved" is fresh. */
+.status {
+  transition: color var(--motion-check-duration) var(--ease-state);
+}
+
+.status[data-result='saved'] {
+  color: var(--color-accent);
+}
+
+.savedIcon {
+  animation: savedIn var(--motion-action-duration) var(--ease-release) both;
+}
+
+@keyframes savedIn {
+  from {
+    opacity: 0;
+    transform: scale(var(--check-press-scale));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No pop: the check only fades in. */
+  .savedIcon {
+    animation-name: statusIn;
+  }
+}
+
+/* The earlier save's confirmation while typing resumes: secondary, in the result colour. */
+.savedEcho {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-accent);
+  white-space: nowrap;
+  animation: statusIn var(--motion-check-duration) var(--ease-enter) both;
+}
+
+/* The resolved conflict choice fades out as an inert copy. */
+.conflict[data-phase='leaving'] {
+  animation: noticeOut var(--motion-dialog-exit-duration) var(--ease-exit) both;
+}
+
+@keyframes noticeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Touch: Retry is a full 44 px target (focus ring included in its box). */
+@media (pointer: coarse), (width < 600px) {
+  /* Outranks the head's compact .noteActions .button sizing. */
+  :global(.noteActions) .status .retry {
+    min-block-size: 44px;
+  }
+}
+
+/* The phone note bar (the app bar carrying this note): Back · save status · Task settings, then
+   the App menu. The status takes the flexible middle, right-aligned; controls are 44 px. */
+.barHead {
+  display: contents;
+}
+
+.barActions {
+  flex: 1;
+  min-inline-size: 0;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.barHead :is(:global(.backToTasks), :global(.taskSettingsButton)) {
+  min-block-size: 44px;
+  min-inline-size: 44px;
+}
+
+.barActions .status {
+  min-inline-size: 0;
+}
+
+/* In the bar Task settings is its sliders icon alone (its name stays "Task settings"). */
+.barHead :global(.noteSettingsLabel) {
+  display: none;
+}
+
+/* One line in the bar: the earlier-save note would compete with the status. */
+.barActions .savedEcho {
+  display: none;
+}
+
+/* Narrow covers: the arrow alone (its name stays "Back to tasks"). */
+@media (width <= 360px) {
+  .barBackLabel {
+    display: none;
+  }
+}
+
+/* Reduced motion: every panel and status change only fades; nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .conflict,
+  .notice,
+  .fieldError,
+  .savedEcho {
+    animation-name: statusIn;
+  }
+
+  .conflict[data-phase='leaving'] {
+    animation-name: noticeOut;
+  }
+}

@@ -1,0 +1,212 @@
+/* The auth form: one column, max 352px, no nested card. */
+.form {
+  display: grid;
+  gap: 20px;
+  inline-size: 100%;
+}
+
+.intro {
+  display: grid;
+  gap: 10px;
+  margin-block-end: 10px;
+}
+
+.heading {
+  margin: 0;
+  color: var(--color-text);
+  font: 600 30px / 36px var(--font-display);
+  letter-spacing: -0.035em;
+}
+
+.description {
+  max-inline-size: 310px;
+  margin: 0;
+  color: var(--color-muted);
+  font: 400 14px / 22px var(--font-text);
+}
+
+.submit {
+  inline-size: 100%;
+  min-block-size: 48px;
+}
+
+/* Root error: a bordered region between the fields and the submit, icon + message. */
+.formAlert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--p-danger-300);
+  border-radius: 6px;
+  background: var(--p-danger-50);
+  box-shadow: inset 0 1px 0 var(--color-highlight-strong);
+  color: var(--p-danger-700);
+  font: 400 13px / 20px var(--font-text);
+  animation: alertIn var(--motion-check-duration) var(--ease-enter) both;
+}
+
+.formAlert p {
+  margin: 0;
+}
+
+.alertIcon {
+  flex-shrink: 0;
+  inline-size: 16px;
+  block-size: 16px;
+  margin-block-start: 2px;
+}
+
+@keyframes alertIn {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--move-message-y)));
+  }
+}
+
+.switch {
+  margin: 2px 0 0;
+  color: var(--color-muted);
+  font: 400 13px / 1.5 var(--font-text);
+}
+
+.formAlert .link {
+  color: inherit;
+}
+
+/* Petrol in every state (no visited purple); the underline and the ring stay visible. */
+.link {
+  position: relative;
+  border-radius: 2px;
+  outline: 2px solid transparent;
+  outline-offset: 4px;
+  color: var(--color-accent);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition:
+    opacity var(--motion-release-duration) var(--ease-release),
+    background-color var(--motion-hover-duration) var(--ease-state),
+    outline-color var(--motion-focus-duration) var(--ease-state);
+}
+
+.link:visited {
+  color: var(--color-accent);
+}
+
+@media (hover: hover) {
+  .link:hover {
+    background-color: color-mix(in oklch, var(--color-accent) 8%, transparent);
+  }
+}
+
+.link:active {
+  opacity: 0.72;
+  transition-duration: var(--motion-press-duration);
+}
+
+.link:focus-visible {
+  outline-color: var(--color-focus);
+}
+
+/* Not used today (a link is never unavailable here); kept as the defined state. */
+.link[aria-disabled='true'] {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+.demoArea {
+  display: grid;
+  justify-items: start;
+  gap: 3px;
+  margin-block-start: 6px;
+  padding-block-start: 22px;
+  border-block-start: 1px solid var(--color-edge);
+}
+
+/* Use demo account: a quiet unboxed action with a state layer, never another primary. */
+.demo {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-block-size: 44px;
+  margin-inline-start: -10px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 6px;
+  outline: 2px solid transparent;
+  outline-offset: 3px;
+  background: transparent;
+  color: var(--color-accent);
+  font: 500 13px / 1 var(--font-text);
+  cursor: pointer;
+  transition:
+    transform var(--motion-release-duration) var(--ease-release),
+    outline-color var(--motion-focus-duration) var(--ease-state),
+    opacity var(--motion-hover-duration) var(--ease-state);
+}
+
+.demo svg {
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+.demo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  background: var(--color-text);
+  opacity: 0;
+  transition: opacity var(--motion-release-duration) var(--ease-release);
+}
+
+@media (hover: hover) {
+  .demo:hover:not(:disabled)::before {
+    opacity: var(--state-hover);
+    transition-duration: var(--motion-hover-duration);
+  }
+}
+
+.demo:active:not(:disabled) {
+  transform: translateY(var(--press-y));
+  transition-duration: var(--motion-press-duration);
+}
+
+.demo:active:not(:disabled)::before {
+  opacity: var(--state-pressed);
+  transition-duration: var(--motion-press-duration);
+}
+
+.demo:focus-visible {
+  outline-color: var(--color-focus);
+}
+
+.demo:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.demoHint {
+  margin: 0;
+  color: var(--color-muted);
+  font: 400 12px / 18px var(--font-text);
+}
+
+.demoDone {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  color: var(--color-success);
+  font: var(--weight-semibold) var(--text-xs) / 1.5 var(--font-text);
+  animation: alertIn var(--motion-check-duration) var(--ease-enter) both;
+}
+
+.demoDoneIcon {
+  inline-size: 14px;
+  block-size: 14px;
+}

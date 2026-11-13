@@ -1,0 +1,104 @@
+# Local cloud topology: source builds, HTTP loopback only, independent data and secrets.
+name: tuck-cloud-local
+
+services:
+  traefik:
+    image: traefik:v3.6
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.constraints=Label(`com.docker.compose.project`, `tuck-cloud-local`)
+      - --entryPoints.web.address=:80
+      - --ping=true
+      # One line per request, naming the API replica that served it.
+      - --accesslog=true
+    healthcheck:
+      test: ['CMD', 'traefik', 'healthcheck', '--ping']
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    ports:
+      - '127.0.0.1:${CLOUD_LOCAL_PORT:-8081}:80'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+
+  postgres:
+    # Debian-based on purpose: Alpine images have no locales, so lower() would not fold É.
+    image: postgres:16
+    environment:
+      POSTGRES_USER: tuck
+      POSTGRES_DB: tuck
+      # Applied when the volume is first created; generated once into .env.cloud-local.secret.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?run make cloud, which generates .env.cloud-local.secret}
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'tuck', '-d', 'tuck']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    # Rate-limit counters only: short-lived by design, so nothing is persisted.
+    image: redis:7
+    command: ['redis-server', '--save', '', '--appendonly', 'no']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    init: true
+    deploy:
+      replicas: 2
+    environment:
+      JWT_SECRET: ${JWT_SECRET:?run make cloud, which generates .env.cloud-local.secret}
+      DATABASE_URL: postgres://tuck:${POSTGRES_PASSWORD}@postgres:5432/tuck
+      REDIS_URL: redis://redis:6379
+      SEED_DEMO: 'true'
+      COOKIE_SECURE: 'false'
+      # One proxy hop (Traefik), so the rate limit sees the real client address.
+      TRUST_PROXY: '1'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    labels:
+      # Traefik only routes to healthy replicas and spreads requests across them (round robin).
+      - traefik.enable=true
+      - traefik.http.routers.tuck-api.rule=(Host(`localhost`) || Host(`127.0.0.1`)) && PathPrefix(`/api/`)
+      - traefik.http.routers.tuck-api.entryPoints=web
+      - traefik.http.routers.tuck-api.middlewares=no-store,api-retry
+      - traefik.http.middlewares.no-store.headers.customResponseHeaders.Cache-Control=no-store
+      # A replica that is stopping can drop a connection before Traefik notices: retry it on another.
+      - traefik.http.middlewares.api-retry.retry.attempts=3
+      - traefik.http.middlewares.api-retry.retry.initialInterval=100ms
+      - traefik.http.services.tuck-api.loadBalancer.server.port=3000
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      args:
+        DEMO_SIGN_IN: 'true'
+    depends_on:
+      api:
+        condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.tuck.rule=(Host(`localhost`) || Host(`127.0.0.1`))
+      - traefik.http.routers.tuck.entryPoints=web
+      - traefik.http.services.tuck.loadBalancer.server.port=8080
+    restart: unless-stopped
+
+volumes:
+  postgres-data:

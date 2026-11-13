@@ -1,0 +1,152 @@
+/* Rows that are still being created on the server. They look like rows but are not interactive. */
+.pending {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  min-block-size: var(--p-row-min);
+  padding: var(--space-2) var(--space-4);
+  border-block-end: var(--border-width) solid var(--color-edge);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
+.pendingHint {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+}
+
+/* The list's presence root (useRowPresence): no box of its own, so the layout is unchanged. */
+.presence {
+  display: contents;
+}
+
+/* A create in flight enters once; the confirmed row then takes its place without a second entry. */
+.pending {
+  animation: pendingEnter var(--motion-row-enter-duration) var(--ease-enter);
+}
+
+@keyframes pendingEnter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--move-enter-y));
+  }
+}
+
+/*
+ * The search row: the field fills it and New task sits at its end, at the field's height
+ * (36px fine pointer, 44px touch). Phones show a 44px round icon-only button.
+ */
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-inline-size: 0;
+}
+.searchRow > form {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+.newTask {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  block-size: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--p-accent-800);
+  border-radius: 6px;
+  background: var(--p-accent-700);
+  color: #ffffff;
+  font: 500 12px/16px var(--font-text);
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+  /* A top light, an underside shade and a contact cast; one edge, no rim. */
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    inset 0 -1px 0 rgb(10 34 43 / 0.12),
+    0 1px 2px rgb(25 48 57 / 0.14);
+  outline: 2px solid transparent;
+  outline-offset: 3px;
+  transition:
+    background-color var(--motion-hover-duration) var(--ease-state),
+    box-shadow var(--motion-release-duration) var(--ease-release),
+    outline-color var(--motion-focus-duration) var(--ease-state);
+}
+/* The press scales the glyph, never the hit target. */
+.newTask svg {
+  inline-size: 18px;
+  block-size: 18px;
+  transition: transform var(--motion-release-duration) var(--ease-release);
+}
+@media (hover: hover) {
+  .newTask:hover {
+    background: var(--p-accent-600);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.12),
+      inset 0 -1px 0 rgb(10 34 43 / 0.12),
+      0 2px 4px rgb(25 48 57 / 0.18);
+  }
+}
+.newTask:active {
+  background: var(--p-accent-800);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    inset 0 -1px 0 rgb(10 34 43 / 0.12),
+    0 1px 1px rgb(25 48 57 / 0.1);
+  transition-duration: var(--motion-press-duration);
+}
+.newTask:active svg {
+  transform: scale(var(--icon-press-scale));
+  transition-duration: var(--motion-press-duration);
+}
+/* Keyboard focus only: an independent 2px ring at 3px, never from a pointer press. */
+.newTask:focus-visible {
+  outline-color: var(--color-focus);
+}
+@media (pointer: coarse) {
+  .newTask {
+    block-size: 44px;
+  }
+}
+@media (width < 600px) {
+  .newTask {
+    inline-size: 44px;
+    block-size: 44px;
+    padding: 0;
+    border-radius: 50%;
+  }
+  .newTask svg {
+    inline-size: 20px;
+    block-size: 20px;
+    stroke-width: 1.75;
+  }
+  .newTaskLabel {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .newTask:active svg {
+    transform: none;
+  }
+}
+
+/* The phone app bar's slot for an open note's head: its controls sit in the bar's own row. */
+.noteBarSlot {
+  display: contents;
+}
+
+/* The list's foot (the Trash link): outside the scroller, so it never scrolls off. */
+.listFooter {
+  /* The pane's frame has three rows (head, bar, scroller): the foot takes a fourth, below. */
+  grid-row: 4;
+  display: flex;
+  align-items: center;
+  min-block-size: 44px;
+  padding-inline: var(--space-2);
+  border-block-start: var(--border-width) solid var(--color-edge);
+}
